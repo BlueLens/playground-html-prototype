@@ -13,6 +13,8 @@ function readURL(input) {
 $(document).ready(function(){
 
     $('.recent-item').click(function(){
+        $('.recent-item').removeClass('is-selected');
+        $(this).addClass('is-selected');
         var path = $(this).find('img').attr('src');
         $('.detecting-preview-img').attr('src', path);
     });

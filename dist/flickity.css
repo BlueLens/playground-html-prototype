@@ -55,7 +55,8 @@ http://flickity.metafizzy.co
     background: #602CEB;
     opacity: 0;
 }
-.recent-item:hover:after {
+.recent-item:hover:after,
+.recent-item.is-selected:after {
     opacity: .6;
 }
 .recent-item img {

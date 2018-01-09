@@ -31,7 +31,7 @@
             <label class="tooltip" data-tooltip="궁금한 옷, 스타일렌즈가 찾아드릴께요!">
                 <input type="file" value="사진 업로드" onchange="readURL(this);" />
             </label>
-            <div class="input-recent" data-flickity='{ "contain": true, "prevNextButtons": false, "pageDots": false, "cellSelector": ".recent-item", "cellAlign": "left" }'>
+            <div class="input-recent" data-flickity='{ "contain": true, "prevNextButtons": false, "pageDots": false, "cellSelector": ".recent-item", "cellAlign": "left", "initialIndex": 7 }'>
                 <a href="#" class="recent-item"><img src="data/img00.jpg"></a>
                 <a href="#" class="recent-item"><img src="data/img01.png"></a>
                 <a href="#" class="recent-item"><img src="data/img02.jpg"></a>
@@ -54,7 +54,7 @@
         <div class="detecting-area">
             <h3 class="s-title">Tagging Result</h3>
             <div class="detecting-preview">
-                <div class="detecting-square"><span>1</span></div>
+                <div class="detecting-square is-selected"><span>1</span></div>
                 <div class="detecting-square"><span>2</span></div>
                 <div class="detecting-square"><span>3</span></div>
                 <img class="detecting-preview-img" src="data/img00.jpg">
@@ -72,8 +72,7 @@
             <div class="data-desc container">
                 <div class="columns">
                     <div class="col-3">
-                        <i class="icon"></i>
-                        <strong>Category</strong>
+                        <h4>Category</h4>
                     </div>
                     <div class="col-9">
                         <ul class="item-list">
