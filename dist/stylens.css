@@ -65,8 +65,10 @@ html {
     display: flex;
 }
 .detecting-area {
-    margin-right: 42px;
-    width: 460px;
+    padding-right: 42px;
+    width: 50%;
+    max-width: 480px;
+    box-sizing: border-box;
 }
 .detecting-preview {
     position: relative;
@@ -79,6 +81,7 @@ html {
     background: #000;
     box-sizing: border-box;
     text-align: center;
+    overflow: hidden;
 }
 .detecting-square {
     position: absolute;
@@ -116,7 +119,7 @@ html {
 /* data attributes */
 .data-area {
     width: 50%;
-    max-width: 458px;
+    max-width: 480px;
 }
 .pagination {
     margin: 0;
