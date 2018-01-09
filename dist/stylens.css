@@ -1,0 +1,59 @@
+.header {
+    height: 196px;
+    background: #602CEB;
+    color: #FFF;
+}
+.header h1 {
+    display: inline-block;
+    padding: 18px 0 8px;
+    border-bottom: 4px solid #9673F1;
+    font-weight: 600;
+    font-size: 15px;
+}
+.header h2 {
+    margin: 30px 0 12px;
+    font-weight: 900;
+    font-size: 28px;
+    text-transform: uppercase;
+}
+.header p {
+    color: #B29DEB;
+    font-size: 12px;
+}
+.section {
+    margin-bottom: 30px;
+}
+.s-title {
+    position: relative;
+    margin-bottom: 16px;
+    color: #000;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+.s-title:before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 0;
+    margin: 0 10px 1px 0;
+    width: 6px;
+    height: 18px;
+    background: #191818;
+}
+.input-action {
+    position: relative;
+    padding-left: 108px;
+}
+.input-action button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    border: 0;
+    background: #FFF url('../img/btn-add.svg') no-repeat center;
+    text-indent: -9999px;
+    cursor: pointer;
+}
