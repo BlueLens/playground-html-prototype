@@ -61,7 +61,3 @@ http://flickity.metafizzy.co
 .recent-item img {
     height: 100px;
 }
-
-a, div, ::after, button, input {
-    transition: all 0.3s ease;
-}
