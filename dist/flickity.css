@@ -40,13 +40,28 @@ http://flickity.metafizzy.co
 /*  custom style _R
     스와이프 가능한 횡스크롤 탭 네비게이션 */
 .recent-item {
+    margin-right: 4px;
     height: 100px;
     overflow: hidden;
 }
-.recent-item.is-selected {
-    border: 4px solid #389AE3;
-    color: #444547;
+.recent-item:after {
+    content: "";
+    z-index: 1;
+    left: 0;
+    top: 0;
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    background: #602CEB;
+    opacity: 0;
+}
+.recent-item:hover:after {
+    opacity: .6;
 }
 .recent-item img {
     height: 100px;
+}
+
+a, div, ::after, button, input {
+    transition: all 0.3s ease;
 }

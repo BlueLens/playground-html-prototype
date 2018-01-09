@@ -28,7 +28,9 @@
     <div class="container grid-lg">
         <h3 class="s-title">Input Image</h3>
         <div class="input-action">
-            <button class="tooltip" data-tooltip="궁금한 옷, 스타일렌즈가 찾아드릴께요!">사진 업로드</button>
+            <label class="tooltip" data-tooltip="궁금한 옷, 스타일렌즈가 찾아드릴께요!">
+                <input type="file" value="사진 업로드" />
+            </label>
             <div class="input-recent" data-flickity='{ "contain": true, "prevNextButtons": false, "pageDots": false, "cellSelector": ".recent-item", "cellAlign": "left" }'>
                 <a href="#" class="recent-item"><img src="data/img00.jpg"></a>
                 <a href="#" class="recent-item"><img src="data/img01.png"></a>
@@ -51,8 +53,12 @@
         <div class="columns">
             <div class="col-5 col-sm-12">
                 <h3 class="s-title">Tagging Result</h3>
-                <div class="crop-area"></div>
-                <img src="thumb-lg.png">
+                <div class="detecting-area">
+                    <div class="detecting-square"><span>1</span></div>
+                    <div class="detecting-square"><span>2</span></div>
+                    <div class="detecting-square"><span>3</span></div>
+                    <img src="data/img00.jpg">
+                </div>
             </div>
             <div class="col-7 col-sm-12">
                 <h3 class="s-title">Attributes</h3>

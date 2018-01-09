@@ -46,7 +46,7 @@
     position: relative;
     padding-left: 108px;
 }
-.input-action button {
+.input-action label {
     position: absolute;
     left: 0;
     top: 0;
