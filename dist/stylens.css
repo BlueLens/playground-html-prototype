@@ -83,12 +83,17 @@ html {
     text-align: center;
     overflow: hidden;
 }
-.detecting-square {
+.detecting-wrap {
     position: absolute;
-    min-width: 80px;
-    min-height: 80px;
-    border: 5px solid transparent;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.detecting-square {
+    position: relative;
+    border: 5px solid #404040;
     box-shadow: 2px 0 12px rgba(0,0,0,.25);
+    box-sizing: border-box;
 }
 .detecting-square.is-selected {
     z-index: 5;
