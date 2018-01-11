@@ -25,6 +25,13 @@ function dragMoveListener (event) {
   target.setAttribute('data-y', y);
 }
 
+var FeedApi = requirels
+('../api/style_api/api/FeedApi');
+var api = new FeedApi();
+console.log('Feed API')
+console.log(api);
+
+
 $(document).ready(function() {
 
     $('.recent-item').click(function() {
@@ -115,7 +122,7 @@ $(document).ready(function() {
 
         // minimum size
         restrictSize: {
-          min: { width: 100, height: 50 },
+          min: { width: 40, height: 40 },
         },
 
         inertia: true,
