@@ -54,8 +54,8 @@ $(document).ready(function() {
     */
     $('.detecting-square').mousedown(function() {
         $('.detecting-square').removeClass('is-selected');
-        $(this).addClass('is-selected');
         $('.page-item').removeClass('active');
+        $(this).addClass('is-selected');
         if($(this).is(':first-child')) {
             $('.page-item:first-child').addClass('active');
         } else if($(this).is(':nth-child(2)')) {
@@ -69,6 +69,7 @@ $(document).ready(function() {
         };
     });
     $('.page-item').mousedown(function() {
+        $('.detecting-square').removeClass('is-selected');
         $('.page-item').removeClass('active');
         $(this).addClass('active');
         if($(this).is(':first-child')) {
