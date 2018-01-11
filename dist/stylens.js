@@ -25,13 +25,6 @@ function dragMoveListener (event) {
   target.setAttribute('data-y', y);
 }
 
-var FeedApi = requirels
-('../api/style_api/api/FeedApi');
-var api = new FeedApi();
-console.log('Feed API')
-console.log(api);
-
-
 $(document).ready(function() {
 
     $('.recent-item').click(function() {
