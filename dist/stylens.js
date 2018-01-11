@@ -46,7 +46,7 @@ $(document).ready(function() {
             'height': detectingWrapH
         });
     }).each(function() {
-        if(this.complete) $(this).load();
+        // if(this.complete) $(this).load();
     });
     
     /*
@@ -88,9 +88,11 @@ $(document).ready(function() {
     /*
         Attribute에서 닯은 퍼센트가 50이 넘어가면 class 부여하기
     */
-    if($('.bar-item').attr('aria-valuenow') > 50) {
-        $(this).parent('div').parent('li').addClass('is-similar');
-    };
+    $('.bar-item').each(function() {
+        if($(this).attr('aria-valuenow') > 50) {
+            $(this).parent('div').parent('li').addClass('is-similar');
+        }
+    });
 
     /* for Tagging Resut area */
     interact('.detecting-square')
