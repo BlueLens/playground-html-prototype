@@ -1,0 +1,22 @@
+{
+  "name": "playground-html-prototype",
+  "version": "0.0.1",
+  "description": "Stylens Playground HTML prototype",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BluehackRano/playground-html-prototype.git"
+  },
+  "author": "Bluehack Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BluehackRano/playground-html-prototype/issues"
+  },
+  "homepage": "https://github.com/BluehackRano/playground-html-prototype#readme",
+  "dependencies": {
+    "stylelens-sdk-js": "0.0.4"
+  }
+}
