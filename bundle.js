@@ -74,22 +74,16 @@ function loadPreviewImage(url, width, height) {
     let preview_img = $('.detecting-preview-img');
     preview_img.attr('src', url);
 
-    // preview_img.style.removeProperty('width')
-    // preview_img.style.removeProperty('height')
-    // preview_img.classList.remove('width')
-    // preview_img.classList.remove('height')
     if (width >= height) {
         preview_img.css({
             'width': '100%',
-            'height' : null
+            'height' : 'auto'
         })
-        // preview_img.style.width = '100%'
     } else {
         preview_img.css({
-            'width': null,
+            'width': 'auto',
             'height': '100%'
         })
-        // preview_img.style.height = '100%'
     }
     // console.log(preview_img)
     $('.detecting-preview-img').one('load', function() {

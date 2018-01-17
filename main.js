@@ -76,11 +76,11 @@ function loadPreviewImage(url, width, height) {
     if (width >= height) {
         preview_img.css({
             'width': '100%',
-            'height' : null
+            'height' : 'auto'
         })
     } else {
         preview_img.css({
-            'width': null,
+            'width': 'auto',
             'height': '100%'
         })
     }
