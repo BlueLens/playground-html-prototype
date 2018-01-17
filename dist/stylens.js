@@ -68,7 +68,7 @@ $(document).ready(function() {
             'height': detectingWrapH
         });
     }).each(function() {
-        // if(this.complete) $(this).load();
+        if(this.complete) $('.detecting-preview-img').load();
     });
     
     /*
@@ -139,6 +139,8 @@ $(document).ready(function() {
         restrictSize: {
           min: { width: 40, height: 40 },
         },
+
+        margin: 10,
 
         inertia: true,
       })
