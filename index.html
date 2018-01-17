@@ -13,8 +13,9 @@
     <script src="dist/jquery-3.2.1.min.js"></script>
     <script src="dist/flickity.pkgd.min.js"></script>
     <script src="dist/interact.min.js"></script>
-    <script src="bundle.js"></script> <!-- browserify -->
     <script src="dist/stylens.js"></script>
+    <script src="bundle.js"></script> <!-- browserify -->
+
 </head>
 <body>
 
@@ -31,7 +32,7 @@
         <h3 class="s-title">Input Image</h3>
         <div class="input-action">
             <label class="tooltip" data-tooltip="궁금한 옷, 스타일렌즈가 찾아드릴께요!">
-                <input type="file" value="사진 업로드" onchange="readURL(this);" />
+                <input id="input-image" type="file" value="사진 업로드" accept="image/jpeg"/>
             </label>
             <div class="input-recent" data-flickity='{ "contain": true, "prevNextButtons": false, "pageDots": false, "cellSelector": ".recent-item", "cellAlign": "left", "initialIndex": 7, "lazyLoad": 4 }'>
                 <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img00.jpg"></a>
