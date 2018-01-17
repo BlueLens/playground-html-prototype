@@ -16,7 +16,6 @@ function getFeeds () {
         } else {
             console.log('getFeeds API called successfully.\n Returned data: ')
             console.log(data)
-            console.log(response)
         }
     });
 }
@@ -27,9 +26,14 @@ function getObjectsWithUserFile (file) {
             console.error(error);
         } else {
             console.log('getPlaygroundObjectsByUserImageFile API called successfully.\n Returned data: ')
-            console.log(data)
+            console.log(data.data.boxes)
+            drawObjectBoxes(data.data.boxes)
         }
     })
+}
+
+function drawObjectBoxes(boxes) {
+    console.log('drawObjectBoxes')
 }
 
 function resizeWithRatio (anImage) {
@@ -74,6 +78,7 @@ function loadPreviewImage(url, width, height) {
     let preview_img = $('.detecting-preview-img');
     preview_img.attr('src', url);
 
+    // fit image to parent
     if (width >= height) {
         preview_img.css({
             'width': '100%',
@@ -85,8 +90,9 @@ function loadPreviewImage(url, width, height) {
             'height': '100%'
         })
     }
-    // console.log(preview_img)
-    $('.detecting-preview-img').one('load', function() {
+
+    // ObjectBox restriction
+    preview_img.one('load', function() {
         var detectingWrapW = $(this).outerWidth();
         var detectingWrapH = $(this).outerHeight();
         $('.detecting-wrap').css({
@@ -96,7 +102,7 @@ function loadPreviewImage(url, width, height) {
 
     }).each(function() {
         if(this.complete) {
-            $('.detecting-preview-img').load();
+            preview_img.load();
         }
     });
 }

@@ -3,34 +3,85 @@ let StyleApi = require('stylelens-sdk-js');
 let playground_api = new StyleApi.PlaygroundApi()
 let feed_api = new StyleApi.FeedApi()
 
+/******
+* APIs
+* *****/
 function getFeeds () {
     var opts = {
         'offset': 0,
         'limit': 100
     };
-
     feed_api.getFeeds(opts, function (error, data, response) {
         if (error) {
             console.error(error);
         } else {
             console.log('getFeeds API called successfully.\n Returned data: ')
             console.log(data)
-            console.log(response)
         }
     });
 }
 
-function getObjectsWithUserFile (file) {
+function getPlaygroundObjectsByUserImageFile (file) {
     playground_api.getPlaygroundObjectsByUserImageFile(file, function(error, data, response) {
         if (error) {
             console.error(error);
         } else {
             console.log('getPlaygroundObjectsByUserImageFile API called successfully.\n Returned data: ')
-            console.log(data)
+            console.log(data.data.boxes)
+            drawObjectBoxes(data.data.boxes)
         }
     })
 }
+/******
+ * ends of APIs
+ * *****/
 
+/******
+ * Views
+ * *****/
+function loadPreviewImage(url, width, height) {
+    let preview_img = $('.detecting-preview-img');
+    preview_img.attr('src', url);
+
+    // fit image to parent
+    if (width >= height) {
+        preview_img.css({
+            'width': '100%',
+            'height' : 'auto'
+        })
+    } else {
+        preview_img.css({
+            'width': 'auto',
+            'height': '100%'
+        })
+    }
+
+    // ObjectBox restriction
+    preview_img.one('load', function() {
+        var detectingWrapW = $(this).outerWidth();
+        var detectingWrapH = $(this).outerHeight();
+        $('.detecting-wrap').css({
+            'width': detectingWrapW,
+            'height': detectingWrapH
+        });
+
+    }).each(function() {
+        if(this.complete) {
+            preview_img.load();
+        }
+    });
+}
+
+function drawObjectBoxes(boxes) {
+    console.log('drawObjectBoxes')
+}
+/******
+ * ends of Views
+ * *****/
+
+/******
+ * Utils
+ * *****/
 function resizeWithRatio (anImage) {
     var maxWidth = 380;
     var maxHeight = 380;
@@ -68,38 +119,13 @@ function downloadToLocalWithURI(uri, name) {
     document.body.removeChild(link);
     delete link;
 }
+/******
+ * ends of Utils
+ * *****/
 
-function loadPreviewImage(url, width, height) {
-    let preview_img = $('.detecting-preview-img');
-    preview_img.attr('src', url);
-
-    if (width >= height) {
-        preview_img.css({
-            'width': '100%',
-            'height' : 'auto'
-        })
-    } else {
-        preview_img.css({
-            'width': 'auto',
-            'height': '100%'
-        })
-    }
-    // console.log(preview_img)
-    $('.detecting-preview-img').one('load', function() {
-        var detectingWrapW = $(this).outerWidth();
-        var detectingWrapH = $(this).outerHeight();
-        $('.detecting-wrap').css({
-            'width': detectingWrapW,
-            'height': detectingWrapH
-        });
-
-    }).each(function() {
-        if(this.complete) {
-            $('.detecting-preview-img').load();
-        }
-    });
-}
-
+/******
+ * from stylens.js
+ * *****/
 window.readInputFile = function (input) {
     if (input[0] && input[0].files[0]) {
         let anImageFile = input[0].files[0]
@@ -127,7 +153,7 @@ window.readInputFile = function (input) {
 
                 // downloadToLocalWithURI(fileURL, resizedImage.name)
                 let aFile = dataURLtoFile(fileURL, resizedImage.name)
-                getObjectsWithUserFile(aFile)
+                getPlaygroundObjectsByUserImageFile(aFile)
             }
             anImage.src = src
         }
