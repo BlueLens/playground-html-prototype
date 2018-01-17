@@ -22,6 +22,8 @@ function getFeeds () {
 }
 
 function getPlaygroundObjectsByUserImageFile (file) {
+    resetObjectBoxes()
+
     playground_api.getPlaygroundObjectsByUserImageFile(file, function(error, data, response) {
         if (error) {
             console.error(error);
@@ -39,12 +41,15 @@ function getPlaygroundObjectsByUserImageFile (file) {
 /******
  * Views
  * *****/
-function loadPreviewImage(url, width, height) {
+const USER_IMAGE_MAX_SIZE = 380
+let RATIO
+
+function loadPreviewImage(url, anImage) {
     let preview_img = $('.detecting-preview-img');
     preview_img.attr('src', url);
 
     // fit image to parent
-    if (width >= height) {
+    if (anImage.width >= anImage.height) {
         preview_img.css({
             'width': '100%',
             'height' : 'auto'
@@ -56,24 +61,98 @@ function loadPreviewImage(url, width, height) {
         })
     }
 
+    let detectingWrapW
+    let detectingWrapH
     // ObjectBox restriction
     preview_img.one('load', function() {
-        var detectingWrapW = $(this).outerWidth();
-        var detectingWrapH = $(this).outerHeight();
+        detectingWrapW = $(this).outerWidth();
+        detectingWrapH = $(this).outerHeight();
+
         $('.detecting-wrap').css({
             'width': detectingWrapW,
             'height': detectingWrapH
         });
 
+        console.log('ratio before : ' + RATIO)
+
+        if (anImage.width >= anImage.height) {
+            RATIO = detectingWrapW / USER_IMAGE_MAX_SIZE
+        } else {
+            RATIO = detectingWrapH / USER_IMAGE_MAX_SIZE
+        }
     }).each(function() {
         if(this.complete) {
             preview_img.load();
         }
+
+        let aFile = dataURLtoFile(url, anImage.name)
+        getPlaygroundObjectsByUserImageFile(aFile)
+    });
+}
+
+function resetObjectBoxes() {
+    $('.detecting-wrap').empty()
+}
+
+function drawBox(box, index) {
+    let div = document.createElement('div');
+    div.className = 'detecting-square'
+
+    div.style.left = box.left * RATIO + 'px'
+    div.style.top = box.top * RATIO + 'px'
+    div.style.width = (box.right - box.left) * RATIO + 'px'
+    div.style.height = (box.bottom - box.top) * RATIO + 'px'
+
+    if (index == 0) {
+        div.className += ' is-selected'
+    }
+    let span = document.createElement('span');
+    span.innerHTML = index + 1 + ''
+    div.appendChild(span)
+
+    $('.detecting-wrap').append(div)
+
+    /*
+     Detecting square랑 Attributes 번호 연결시키기
+     */
+    $('.detecting-square').mousedown(function() {
+        $('.detecting-square').removeClass('is-selected');
+        $('.page-item').removeClass('active');
+        $(this).addClass('is-selected');
+        if($(this).is(':first-child')) {
+            $('.page-item:first-child').addClass('active');
+        } else if($(this).is(':nth-child(2)')) {
+            $('.page-item:nth-child(2)').addClass('active');
+        } else if($(this).is(':nth-child(3)')) {
+            $('.page-item:nth-child(3)').addClass('active');
+        } else if($(this).is(':nth-child(4)')) {
+            $('.page-item:nth-child(4)').addClass('active');
+        } else if($(this).is(':nth-child(5)')) {
+            $('.page-item:nth-child(5)').addClass('active');
+        };
+    });
+    $('.page-item').mousedown(function() {
+        $('.detecting-square').removeClass('is-selected');
+        $('.page-item').removeClass('active');
+        $(this).addClass('active');
+        if($(this).is(':first-child')) {
+            $('.detecting-square:first-child').addClass('is-selected');
+        } else if($(this).is(':nth-child(2)')) {
+            $('.detecting-square:nth-child(2)').addClass('is-selected');
+        } else if($(this).is(':nth-child(3)')) {
+            $('.detecting-square:nth-child(3)').addClass('is-selected');
+        } else if($(this).is(':nth-child(4)')) {
+            $('.detecting-square:nth-child(4)').addClass('is-selected');
+        } else if($(this).is(':nth-child(5)')) {
+            $('.detecting-square:nth-child(5)').addClass('is-selected');
+        };
     });
 }
 
 function drawObjectBoxes(boxes) {
-    console.log('drawObjectBoxes')
+    boxes.forEach((value, index) => {
+        drawBox(value.box, index)
+    });
 }
 /******
  * ends of Views
@@ -83,8 +162,8 @@ function drawObjectBoxes(boxes) {
  * Utils
  * *****/
 function resizeWithRatio (anImage) {
-    var maxWidth = 380;
-    var maxHeight = 380;
+    var maxWidth = USER_IMAGE_MAX_SIZE;
+    var maxHeight = USER_IMAGE_MAX_SIZE;
     var ratio = 0;
     var width = anImage.width
     var height = anImage.height
@@ -140,7 +219,6 @@ window.readInputFile = function (input) {
                 anImage.type = anImageFile.type
 
                 let resizedImage = resizeWithRatio(anImage)
-                console.log(resizedImage.width + ' x ' + resizedImage.height)
 
                 var canvas = document.createElement('canvas');
                 var context = canvas.getContext("2d");
@@ -148,12 +226,12 @@ window.readInputFile = function (input) {
                 canvas.height = resizedImage.height;
                 context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
 
+                console.log('original: \n' + resizedImage.width + ' x ' + resizedImage.height)
+
                 let fileURL = canvas.toDataURL()
-                loadPreviewImage(fileURL, resizedImage.width, resizedImage.height)
+                loadPreviewImage(fileURL, resizedImage)
 
                 // downloadToLocalWithURI(fileURL, resizedImage.name)
-                let aFile = dataURLtoFile(fileURL, resizedImage.name)
-                getPlaygroundObjectsByUserImageFile(aFile)
             }
             anImage.src = src
         }
