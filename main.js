@@ -69,6 +69,37 @@ function downloadToLocalWithURI(uri, name) {
     delete link;
 }
 
+function loadPreviewImage(url, width, height) {
+    let preview_img = $('.detecting-preview-img');
+    preview_img.attr('src', url);
+
+    if (width >= height) {
+        preview_img.css({
+            'width': '100%',
+            'height' : null
+        })
+    } else {
+        preview_img.css({
+            'width': null,
+            'height': '100%'
+        })
+    }
+    // console.log(preview_img)
+    $('.detecting-preview-img').one('load', function() {
+        var detectingWrapW = $(this).outerWidth();
+        var detectingWrapH = $(this).outerHeight();
+        $('.detecting-wrap').css({
+            'width': detectingWrapW,
+            'height': detectingWrapH
+        });
+
+    }).each(function() {
+        if(this.complete) {
+            $('.detecting-preview-img').load();
+        }
+    });
+}
+
 window.readInputFile = function (input) {
     if (input[0] && input[0].files[0]) {
         let anImageFile = input[0].files[0]
@@ -92,7 +123,7 @@ window.readInputFile = function (input) {
                 context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
 
                 let fileURL = canvas.toDataURL()
-                $('.detecting-preview-img').attr('src', fileURL);
+                loadPreviewImage(fileURL, resizedImage.width, resizedImage.height)
 
                 // downloadToLocalWithURI(fileURL, resizedImage.name)
                 let aFile = dataURLtoFile(fileURL, resizedImage.name)
