@@ -500,11 +500,7 @@ Emitter.prototype.hasListeners = function(event){
      * @type {Array.<String>}
      * @default {}
      */
-    this.defaultHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-    };
+    this.defaultHeaders = {};
 
     /**
      * The default HTTP timeout for all API calls.
@@ -1009,7 +1005,7 @@ Emitter.prototype.hasListeners = function(event){
 }));
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":31,"fs":30,"querystring":35,"superagent":22}],4:[function(require,module,exports){
+},{"buffer":32,"fs":31,"querystring":36,"superagent":23}],4:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -1312,6 +1308,58 @@ Emitter.prototype.hasListeners = function(event){
     }
 
     /**
+     * Callback function to receive the result of the getImagesByObjectId operation.
+     * @callback module:api/ImageApi~getImagesByObjectIdCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/GetImagesResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Query to search images by object id
+     * 
+     * @param {String} objectId 
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.offset 
+     * @param {Number} opts.limit 
+     * @param {module:api/ImageApi~getImagesByObjectIdCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/GetImagesResponse}
+     */
+    this.getImagesByObjectId = function(objectId, opts, callback) {
+      opts = opts || {};
+      var postBody = null;
+
+      // verify the required parameter 'objectId' is set
+      if (objectId === undefined || objectId === null) {
+        throw new Error("Missing the required parameter 'objectId' when calling getImagesByObjectId");
+      }
+
+
+      var pathParams = {
+        'objectId': objectId
+      };
+      var queryParams = {
+        'offset': opts['offset'],
+        'limit': opts['limit']
+      };
+      var headerParams = {
+      };
+      var formParams = {
+      };
+
+      var authNames = [];
+      var contentTypes = [];
+      var accepts = ['application/json'];
+      var returnType = GetImagesResponse;
+
+      return this.apiClient.callApi(
+        '/images/objects/{objectId}', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the getImagesByUserImageFile operation.
      * @callback module:api/ImageApi~getImagesByUserImageFileCallback
      * @param {String} error Error message, if any.
@@ -1562,7 +1610,7 @@ Emitter.prototype.hasListeners = function(event){
   return exports;
 }));
 
-},{"../ApiClient":3,"../model/GetObjectsByImageIdResponse":15,"../model/GetObjectsResponse":16}],7:[function(require,module,exports){
+},{"../ApiClient":3,"../model/GetObjectsByImageIdResponse":15,"../model/GetObjectsResponse":17}],7:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -1663,7 +1711,7 @@ Emitter.prototype.hasListeners = function(event){
   return exports;
 }));
 
-},{"../ApiClient":3,"../model/GetObjectsResponse":16}],8:[function(require,module,exports){
+},{"../ApiClient":3,"../model/GetObjectsResponse":17}],8:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -1683,12 +1731,12 @@ Emitter.prototype.hasListeners = function(event){
 (function(factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(['ApiClient', 'model/Box', 'model/BoxObject', 'model/BoxesArray', 'model/GetFeedResponse', 'model/GetImageResponse', 'model/GetImagesResponse', 'model/GetObjectsByImageIdResponse', 'model/GetObjectsResponse', 'model/GetObjectsResponseData', 'model/Image', 'model/ImagesArray', 'model/SearchImageResponse', 'model/SimImage', 'api/FeedApi', 'api/ImageApi', 'api/ObjectApi', 'api/PlaygroundApi'], factory);
+    define(['ApiClient', 'model/Box', 'model/BoxObject', 'model/BoxesArray', 'model/GetFeedResponse', 'model/GetImageResponse', 'model/GetImagesResponse', 'model/GetObjectsByImageIdResponse', 'model/GetObjectsByImageIdResponseData', 'model/GetObjectsResponse', 'model/GetObjectsResponseData', 'model/Image', 'model/ImagesArray', 'model/SearchImageResponse', 'model/SimImage', 'api/FeedApi', 'api/ImageApi', 'api/ObjectApi', 'api/PlaygroundApi'], factory);
   } else if (typeof module === 'object' && module.exports) {
     // CommonJS-like environments that support module.exports, like Node.
-    module.exports = factory(require('./ApiClient'), require('./model/Box'), require('./model/BoxObject'), require('./model/BoxesArray'), require('./model/GetFeedResponse'), require('./model/GetImageResponse'), require('./model/GetImagesResponse'), require('./model/GetObjectsByImageIdResponse'), require('./model/GetObjectsResponse'), require('./model/GetObjectsResponseData'), require('./model/Image'), require('./model/ImagesArray'), require('./model/SearchImageResponse'), require('./model/SimImage'), require('./api/FeedApi'), require('./api/ImageApi'), require('./api/ObjectApi'), require('./api/PlaygroundApi'));
+    module.exports = factory(require('./ApiClient'), require('./model/Box'), require('./model/BoxObject'), require('./model/BoxesArray'), require('./model/GetFeedResponse'), require('./model/GetImageResponse'), require('./model/GetImagesResponse'), require('./model/GetObjectsByImageIdResponse'), require('./model/GetObjectsByImageIdResponseData'), require('./model/GetObjectsResponse'), require('./model/GetObjectsResponseData'), require('./model/Image'), require('./model/ImagesArray'), require('./model/SearchImageResponse'), require('./model/SimImage'), require('./api/FeedApi'), require('./api/ImageApi'), require('./api/ObjectApi'), require('./api/PlaygroundApi'));
   }
-}(function(ApiClient, Box, BoxObject, BoxesArray, GetFeedResponse, GetImageResponse, GetImagesResponse, GetObjectsByImageIdResponse, GetObjectsResponse, GetObjectsResponseData, Image, ImagesArray, SearchImageResponse, SimImage, FeedApi, ImageApi, ObjectApi, PlaygroundApi) {
+}(function(ApiClient, Box, BoxObject, BoxesArray, GetFeedResponse, GetImageResponse, GetImagesResponse, GetObjectsByImageIdResponse, GetObjectsByImageIdResponseData, GetObjectsResponse, GetObjectsResponseData, Image, ImagesArray, SearchImageResponse, SimImage, FeedApi, ImageApi, ObjectApi, PlaygroundApi) {
   'use strict';
 
   /**
@@ -1764,6 +1812,11 @@ Emitter.prototype.hasListeners = function(event){
      */
     GetObjectsByImageIdResponse: GetObjectsByImageIdResponse,
     /**
+     * The GetObjectsByImageIdResponseData model constructor.
+     * @property {module:model/GetObjectsByImageIdResponseData}
+     */
+    GetObjectsByImageIdResponseData: GetObjectsByImageIdResponseData,
+    /**
      * The GetObjectsResponse model constructor.
      * @property {module:model/GetObjectsResponse}
      */
@@ -1818,7 +1871,7 @@ Emitter.prototype.hasListeners = function(event){
   return exports;
 }));
 
-},{"./ApiClient":3,"./api/FeedApi":4,"./api/ImageApi":5,"./api/ObjectApi":6,"./api/PlaygroundApi":7,"./model/Box":9,"./model/BoxObject":10,"./model/BoxesArray":11,"./model/GetFeedResponse":12,"./model/GetImageResponse":13,"./model/GetImagesResponse":14,"./model/GetObjectsByImageIdResponse":15,"./model/GetObjectsResponse":16,"./model/GetObjectsResponseData":17,"./model/Image":18,"./model/ImagesArray":19,"./model/SearchImageResponse":20,"./model/SimImage":21}],9:[function(require,module,exports){
+},{"./ApiClient":3,"./api/FeedApi":4,"./api/ImageApi":5,"./api/ObjectApi":6,"./api/PlaygroundApi":7,"./model/Box":9,"./model/BoxObject":10,"./model/BoxesArray":11,"./model/GetFeedResponse":12,"./model/GetImageResponse":13,"./model/GetImagesResponse":14,"./model/GetObjectsByImageIdResponse":15,"./model/GetObjectsByImageIdResponseData":16,"./model/GetObjectsResponse":17,"./model/GetObjectsResponseData":18,"./model/Image":19,"./model/ImagesArray":20,"./model/SearchImageResponse":21,"./model/SimImage":22}],9:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -1946,18 +1999,18 @@ Emitter.prototype.hasListeners = function(event){
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(['ApiClient', 'model/Box', 'model/Image'], factory);
+    define(['ApiClient', 'model/Box'], factory);
   } else if (typeof module === 'object' && module.exports) {
     // CommonJS-like environments that support module.exports, like Node.
-    module.exports = factory(require('../ApiClient'), require('./Box'), require('./Image'));
+    module.exports = factory(require('../ApiClient'), require('./Box'));
   } else {
     // Browser globals (root is window)
     if (!root.StyleApi) {
       root.StyleApi = {};
     }
-    root.StyleApi.BoxObject = factory(root.StyleApi.ApiClient, root.StyleApi.Box, root.StyleApi.Image);
+    root.StyleApi.BoxObject = factory(root.StyleApi.ApiClient, root.StyleApi.Box);
   }
-}(this, function(ApiClient, Box, Image) {
+}(this, function(ApiClient, Box) {
   'use strict';
 
 
@@ -1976,7 +2029,6 @@ Emitter.prototype.hasListeners = function(event){
    */
   var exports = function() {
     var _this = this;
-
 
 
 
@@ -2015,9 +2067,6 @@ Emitter.prototype.hasListeners = function(event){
       if (data.hasOwnProperty('score')) {
         obj['score'] = ApiClient.convertToType(data['score'], 'Number');
       }
-      if (data.hasOwnProperty('images')) {
-        obj['images'] = ApiClient.convertToType(data['images'], [Image]);
-      }
     }
     return obj;
   }
@@ -2046,10 +2095,6 @@ Emitter.prototype.hasListeners = function(event){
    * @member {Number} score
    */
   exports.prototype['score'] = undefined;
-  /**
-   * @member {Array.<module:model/Image>} images
-   */
-  exports.prototype['images'] = undefined;
 
 
 
@@ -2058,7 +2103,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./Box":9,"./Image":18}],11:[function(require,module,exports){
+},{"../ApiClient":3,"./Box":9}],11:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2231,7 +2276,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./Image":18}],13:[function(require,module,exports){
+},{"../ApiClient":3,"./Image":19}],13:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2323,7 +2368,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./Image":18}],14:[function(require,module,exports){
+},{"../ApiClient":3,"./Image":19}],14:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2415,7 +2460,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./Image":18}],15:[function(require,module,exports){
+},{"../ApiClient":3,"./Image":19}],15:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2435,18 +2480,18 @@ Emitter.prototype.hasListeners = function(event){
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(['ApiClient', 'model/GetObjectsResponseData'], factory);
+    define(['ApiClient', 'model/GetObjectsByImageIdResponseData'], factory);
   } else if (typeof module === 'object' && module.exports) {
     // CommonJS-like environments that support module.exports, like Node.
-    module.exports = factory(require('../ApiClient'), require('./GetObjectsResponseData'));
+    module.exports = factory(require('../ApiClient'), require('./GetObjectsByImageIdResponseData'));
   } else {
     // Browser globals (root is window)
     if (!root.StyleApi) {
       root.StyleApi = {};
     }
-    root.StyleApi.GetObjectsByImageIdResponse = factory(root.StyleApi.ApiClient, root.StyleApi.GetObjectsResponseData);
+    root.StyleApi.GetObjectsByImageIdResponse = factory(root.StyleApi.ApiClient, root.StyleApi.GetObjectsByImageIdResponseData);
   }
-}(this, function(ApiClient, GetObjectsResponseData) {
+}(this, function(ApiClient, GetObjectsByImageIdResponseData) {
   'use strict';
 
 
@@ -2485,7 +2530,7 @@ Emitter.prototype.hasListeners = function(event){
         obj['message'] = ApiClient.convertToType(data['message'], 'String');
       }
       if (data.hasOwnProperty('data')) {
-        obj['data'] = GetObjectsResponseData.constructFromObject(data['data']);
+        obj['data'] = GetObjectsByImageIdResponseData.constructFromObject(data['data']);
       }
     }
     return obj;
@@ -2496,7 +2541,7 @@ Emitter.prototype.hasListeners = function(event){
    */
   exports.prototype['message'] = undefined;
   /**
-   * @member {module:model/GetObjectsResponseData} data
+   * @member {module:model/GetObjectsByImageIdResponseData} data
    */
   exports.prototype['data'] = undefined;
 
@@ -2507,7 +2552,99 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./GetObjectsResponseData":17}],16:[function(require,module,exports){
+},{"../ApiClient":3,"./GetObjectsByImageIdResponseData":16}],16:[function(require,module,exports){
+/**
+ * style-api
+ * This is a API document for Stylens Service
+ *
+ * OpenAPI spec version: 0.0.2
+ * Contact: master@bluehack.net
+ *
+ * NOTE: This class is auto generated by the swagger code generator program.
+ * https://github.com/swagger-api/swagger-codegen.git
+ *
+ * Swagger Codegen version: 2.2.3
+ *
+ * Do not edit the class manually.
+ *
+ */
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['ApiClient', 'model/BoxObject'], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // CommonJS-like environments that support module.exports, like Node.
+    module.exports = factory(require('../ApiClient'), require('./BoxObject'));
+  } else {
+    // Browser globals (root is window)
+    if (!root.StyleApi) {
+      root.StyleApi = {};
+    }
+    root.StyleApi.GetObjectsByImageIdResponseData = factory(root.StyleApi.ApiClient, root.StyleApi.BoxObject);
+  }
+}(this, function(ApiClient, BoxObject) {
+  'use strict';
+
+
+
+
+  /**
+   * The GetObjectsByImageIdResponseData model module.
+   * @module model/GetObjectsByImageIdResponseData
+   * @version 0.0.2
+   */
+
+  /**
+   * Constructs a new <code>GetObjectsByImageIdResponseData</code>.
+   * @alias module:model/GetObjectsByImageIdResponseData
+   * @class
+   */
+  var exports = function() {
+    var _this = this;
+
+
+
+  };
+
+  /**
+   * Constructs a <code>GetObjectsByImageIdResponseData</code> from a plain JavaScript object, optionally creating a new instance.
+   * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
+   * @param {Object} data The plain JavaScript object bearing properties of interest.
+   * @param {module:model/GetObjectsByImageIdResponseData} obj Optional instance to populate.
+   * @return {module:model/GetObjectsByImageIdResponseData} The populated <code>GetObjectsByImageIdResponseData</code> instance.
+   */
+  exports.constructFromObject = function(data, obj) {
+    if (data) {
+      obj = obj || new exports();
+
+      if (data.hasOwnProperty('boxes')) {
+        obj['boxes'] = ApiClient.convertToType(data['boxes'], [BoxObject]);
+      }
+      if (data.hasOwnProperty('image_id')) {
+        obj['image_id'] = ApiClient.convertToType(data['image_id'], 'String');
+      }
+    }
+    return obj;
+  }
+
+  /**
+   * @member {Array.<module:model/BoxObject>} boxes
+   */
+  exports.prototype['boxes'] = undefined;
+  /**
+   * @member {String} image_id
+   */
+  exports.prototype['image_id'] = undefined;
+
+
+
+  return exports;
+}));
+
+
+
+},{"../ApiClient":3,"./BoxObject":10}],17:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2599,7 +2736,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./GetObjectsResponseData":17}],17:[function(require,module,exports){
+},{"../ApiClient":3,"./GetObjectsResponseData":18}],18:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2619,18 +2756,18 @@ Emitter.prototype.hasListeners = function(event){
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(['ApiClient', 'model/BoxObject'], factory);
+    define(['ApiClient', 'model/BoxObject', 'model/SimImage'], factory);
   } else if (typeof module === 'object' && module.exports) {
     // CommonJS-like environments that support module.exports, like Node.
-    module.exports = factory(require('../ApiClient'), require('./BoxObject'));
+    module.exports = factory(require('../ApiClient'), require('./BoxObject'), require('./SimImage'));
   } else {
     // Browser globals (root is window)
     if (!root.StyleApi) {
       root.StyleApi = {};
     }
-    root.StyleApi.GetObjectsResponseData = factory(root.StyleApi.ApiClient, root.StyleApi.BoxObject);
+    root.StyleApi.GetObjectsResponseData = factory(root.StyleApi.ApiClient, root.StyleApi.BoxObject, root.StyleApi.SimImage);
   }
-}(this, function(ApiClient, BoxObject) {
+}(this, function(ApiClient, BoxObject, SimImage) {
   'use strict';
 
 
@@ -2649,6 +2786,7 @@ Emitter.prototype.hasListeners = function(event){
    */
   var exports = function() {
     var _this = this;
+
 
 
 
@@ -2671,6 +2809,9 @@ Emitter.prototype.hasListeners = function(event){
       if (data.hasOwnProperty('image_id')) {
         obj['image_id'] = ApiClient.convertToType(data['image_id'], 'String');
       }
+      if (data.hasOwnProperty('images')) {
+        obj['images'] = ApiClient.convertToType(data['images'], [SimImage]);
+      }
     }
     return obj;
   }
@@ -2683,6 +2824,10 @@ Emitter.prototype.hasListeners = function(event){
    * @member {String} image_id
    */
   exports.prototype['image_id'] = undefined;
+  /**
+   * @member {Array.<module:model/SimImage>} images
+   */
+  exports.prototype['images'] = undefined;
 
 
 
@@ -2691,7 +2836,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./BoxObject":10}],18:[function(require,module,exports){
+},{"../ApiClient":3,"./BoxObject":10,"./SimImage":22}],19:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2897,7 +3042,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./SimImage":21}],19:[function(require,module,exports){
+},{"../ApiClient":3,"./SimImage":22}],20:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -2978,7 +3123,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./Image":18}],20:[function(require,module,exports){
+},{"../ApiClient":3,"./Image":19}],21:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -3070,7 +3215,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3,"./Image":18}],21:[function(require,module,exports){
+},{"../ApiClient":3,"./Image":19}],22:[function(require,module,exports){
 /**
  * style-api
  * This is a API document for Stylens Service
@@ -3268,7 +3413,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
-},{"../ApiClient":3}],22:[function(require,module,exports){
+},{"../ApiClient":3}],23:[function(require,module,exports){
 /**
  * Root reference for iframes.
  */
@@ -4203,7 +4348,7 @@ request.put = function(url, data, fn){
   return req;
 };
 
-},{"./is-function":23,"./is-object":24,"./request-base":25,"./response-base":26,"./should-retry":27,"component-emitter":2}],23:[function(require,module,exports){
+},{"./is-function":24,"./is-object":25,"./request-base":26,"./response-base":27,"./should-retry":28,"component-emitter":2}],24:[function(require,module,exports){
 /**
  * Check if `fn` is a function.
  *
@@ -4220,7 +4365,7 @@ function isFunction(fn) {
 
 module.exports = isFunction;
 
-},{"./is-object":24}],24:[function(require,module,exports){
+},{"./is-object":25}],25:[function(require,module,exports){
 /**
  * Check if `obj` is an object.
  *
@@ -4235,7 +4380,7 @@ function isObject(obj) {
 
 module.exports = isObject;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * Module of mixed-in functions shared between node and client code
  */
@@ -4828,7 +4973,7 @@ RequestBase.prototype._setTimeouts = function() {
   }
 }
 
-},{"./is-object":24}],26:[function(require,module,exports){
+},{"./is-object":25}],27:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -4963,7 +5108,7 @@ ResponseBase.prototype._setStatusProperties = function(status){
     this.notFound = 404 == status;
 };
 
-},{"./utils":28}],27:[function(require,module,exports){
+},{"./utils":29}],28:[function(require,module,exports){
 var ERROR_CODES = [
   'ECONNRESET',
   'ETIMEDOUT',
@@ -4988,7 +5133,7 @@ module.exports = function shouldRetry(err, res) {
   return false;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 
 /**
  * Return the mime type for the given `str`.
@@ -5057,7 +5202,7 @@ exports.cleanHeader = function(header, shouldStripCookie){
   }
   return header;
 };
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -5173,9 +5318,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],30:[function(require,module,exports){
-
 },{}],31:[function(require,module,exports){
+
+},{}],32:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -6891,7 +7036,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":29,"ieee754":32}],32:[function(require,module,exports){
+},{"base64-js":30,"ieee754":33}],33:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -6977,7 +7122,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7063,7 +7208,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7150,10 +7295,10 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":33,"./encode":34}]},{},[1]);
+},{"./decode":34,"./encode":35}]},{},[1]);
