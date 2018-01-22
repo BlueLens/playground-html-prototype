@@ -1,12 +1,30 @@
-function readURL(input){
-    if (input.files && input.files[0]){
-        var reader = new FileReader();
-        reader.onload = function(e){
-            $('.detecting-preview-img').attr('src', e.target.result);
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
+// function readURL(input){
+//     if (input.files && input.files[0]){
+//         var reader = new FileReader();
+//         reader.onload = function(e){
+//             $('.detecting-preview-img').attr('src', e.target.result);
+//         };
+//         reader.readAsDataURL(input.files[0]);
+//     }
+// }
+
+// let StyleApi = require('stylelens-sdk-js')
+//
+// window.getObjectsWithUserFile = function (file) {
+
+// }
+//
+// window.readURL = function(input) {
+//     if (input.files && input.files[0]){
+//         var reader = new FileReader();
+//         reader.onload = function(e){
+//             $('.detecting-preview-img').attr('src', e.target.result);
+//         };
+//         reader.readAsDataURL(input.files[0]);
+//
+//         this.getObjectsWithUserFile()
+//     }
+// }
 
 /* added dragMoveListener() by rano */
 function dragMoveListener (event) {
@@ -27,6 +45,10 @@ function dragMoveListener (event) {
 
 $(document).ready(function() {
 
+    $('#input-image').on("change", function () {
+        readInputFile($(this))
+    })
+
     $('.recent-item').click(function() {
         $('.recent-item').removeClass('is-selected');
         $(this).addClass('is-selected');
@@ -46,7 +68,7 @@ $(document).ready(function() {
             'height': detectingWrapH
         });
     }).each(function() {
-        if(this.complete) $(this).load();
+        if(this.complete) $('.detecting-preview-img').load();
     });
     
     /*
@@ -115,8 +137,10 @@ $(document).ready(function() {
 
         // minimum size
         restrictSize: {
-          min: { width: 100, height: 50 },
+          min: { width: 40, height: 40 },
         },
+
+        margin: 10,
 
         inertia: true,
       })
