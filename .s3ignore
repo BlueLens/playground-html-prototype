@@ -1,0 +1,13 @@
+.DS_Store
+.git
+.git/*
+.gitignore
+.idea/*
+node_modules
+node_modules/*
+README.md
+LICENSE
+*.json
+*.sh
+.s3ignore
+main.js
