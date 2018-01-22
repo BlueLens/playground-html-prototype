@@ -23,7 +23,7 @@ function getFeeds () {
 }
 
 function getPlaygroundObjectsByUserImageFile (file) {
-    resetObjectBoxes()
+    resetViews()
 
     playground_api.getPlaygroundObjectsByUserImageFile(file, function(error, data, response) {
         if (error) {
@@ -32,6 +32,7 @@ function getPlaygroundObjectsByUserImageFile (file) {
             console.log('getPlaygroundObjectsByUserImageFile API called successfully.\n Returned data: ')
             console.log(data.data.boxes)
             drawObjectBoxes(data.data.boxes)
+            drawDataSelect(data.data.boxes.length)
         }
     })
 }
@@ -91,6 +92,11 @@ function loadPreviewImage(url, anImage) {
     });
 }
 
+function resetViews() {
+    resetObjectBoxes()
+    resetDataSelect()
+}
+
 function resetObjectBoxes() {
     $('.detecting-wrap').empty()
 }
@@ -132,6 +138,34 @@ function drawBox(box, index) {
             $('.page-item:nth-child(5)').addClass('active');
         };
     });
+}
+
+function drawObjectBoxes(boxes) {
+    boxes.forEach((value, index) => {
+        drawBox(value.box, index)
+    });
+}
+
+function resetDataSelect() {
+    $('.data-select').empty()
+}
+
+function drawDataSelect(count) {
+    let li, a
+    for (let i=0; i<count; i++) {
+        li = document.createElement('li')
+        li.className = 'page-item'
+        if (i==0) {
+            li.className += ' active'
+        }
+        a = document.createElement('a')
+        a.innerHTML = i + 1 + ''
+
+        li.appendChild(a)
+
+        $('.data-select').append(li)
+    }
+
     $('.page-item').mousedown(function() {
         $('.detecting-square').removeClass('is-selected');
         $('.page-item').removeClass('active');
@@ -147,12 +181,6 @@ function drawBox(box, index) {
         } else if($(this).is(':nth-child(5)')) {
             $('.detecting-square:nth-child(5)').addClass('is-selected');
         };
-    });
-}
-
-function drawObjectBoxes(boxes) {
-    boxes.forEach((value, index) => {
-        drawBox(value.box, index)
     });
 }
 /******
