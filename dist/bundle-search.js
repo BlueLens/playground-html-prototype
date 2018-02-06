@@ -2,272 +2,144 @@
 let StyleApi = require('stylelens-sdk-js');
 
 let playground_api = new StyleApi.PlaygroundApi()
-let feed_api = new StyleApi.FeedApi()
 
 /******
-* APIs
-* *****/
-function getFeeds () {
+ * APIs
+ * *****/
+keyword = ''
+offset = 0
+limit = 100
+
+function getImagesByKeyword (keyword) {
+    $( '#search-prev-button' ).prop("disabled", true)
+    $( '#search-next-button' ).prop("disabled", true)
+    $('.result-list').empty()
+
     var opts = {
-        'offset': 0,
-        'limit': 100
+        'keyword': keyword,
+        'offset': offset,
+        'limit': limit
     };
-    feed_api.getFeeds(opts, function (error, data, response) {
+    playground_api.getImagesByKeyword(opts, function (error, data, response) {
         if (error) {
             console.error(error);
         } else {
-            console.log('getFeeds API called successfully.\n Returned data: ')
+            console.log('getImagesByKeywords API called successfully.\n Returned data: ')
             console.log(data)
-        }
-    });
-}
-
-function getPlaygroundObjectsByUserImageFile (file) {
-    resetViews()
-
-    playground_api.getPlaygroundObjectsByUserImageFile(file, function(error, data, response) {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log('getPlaygroundObjectsByUserImageFile API called successfully.\n Returned data: ')
-            console.log(data.data.boxes)
-            drawObjectBoxes(data.data.boxes)
-            drawDataSelect(data.data.boxes.length)
+            drawResults(keyword, data.data)
         }
     })
 }
-/******
- * ends of APIs
- * *****/
 
-/******
- * Views
- * *****/
-const USER_IMAGE_MAX_SIZE = 380
-let RATIO
+function generateResultImage (image) {
+    let product_name = image.name ? image.name : '""'
+    let cate = image.cate ? image.cate : '""'
+    let tags = image.tags ? image.tags : '""'
+    let image_src = image.main_image_mobile_full ? image.main_image_mobile_full : '""'
 
-function loadPreviewImage(url, anImage) {
-    let preview_img = $('.detecting-preview-img');
-    preview_img.attr('src', url);
+    return '<figure class="figure search-result-image"' +
+        'product_name=' + product_name +
+        ' cate="' + cate +
+        '" tags="' + tags +
+        '"> <img src="' + image_src + '" alt="" />' +
+        '<figcaption>' + keyword + '</figcaption> </figure>'
+}
 
-    // fit image to parent
-    if (anImage.width >= anImage.height) {
-        preview_img.css({
-            'width': '100%',
-            'height' : 'auto'
-        })
-    } else {
-        preview_img.css({
-            'width': 'auto',
-            'height': '100%'
-        })
+function drawResults (keyword, data) {
+    $( '#search-keywords-result-count' ).text('(' + keyword + ' : ' + data.total_count + '개)')
+
+    if (offset > 0) {
+        $( '#search-prev-button' ).prop("disabled", false)
+    }
+    if (data.images.length == limit) {
+        $( '#search-next-button' ).prop("disabled", false)
     }
 
-    let detectingWrapW
-    let detectingWrapH
-    // ObjectBox restriction
-    preview_img.one('load', function() {
-        detectingWrapW = $(this).outerWidth();
-        detectingWrapH = $(this).outerHeight();
+    $( '#search-results-current' ).text(' ( ' + (offset+1) + ' ~ )')
+    if (data.images.length == 0) {
+        $( '#search-results-current' ).text('( )')
+    }
 
-        $('.detecting-wrap').css({
-            'width': detectingWrapW,
-            'height': detectingWrapH
-        });
+    for(let i=0; i<data.images.length; i++) {
+        $('.result-list').append(generateResultImage(data.images[i]))
+    }
 
-        console.log('ratio before : ' + RATIO)
+    $( '.search-result-image' ).click(function () {
+        console.log('product_name : ' + $(this).attr('product_name')
+            + '\ncate : ' + $(this).attr('cate')
+            + '\ntags : ' + $(this).attr('tags'))
+    })
+}
 
-        if (anImage.width >= anImage.height) {
-            RATIO = detectingWrapW / USER_IMAGE_MAX_SIZE
-        } else {
-            RATIO = detectingWrapH / USER_IMAGE_MAX_SIZE
-        }
-    }).each(function() {
-        if(this.complete) {
-            preview_img.load();
-        }
+function getBaseUrl () {
+    var re = new RegExp(/^.*\//);
+    return re.exec(window.location.href);
+}
 
-        let aFile = dataURLtoFile(url, anImage.name)
-        getPlaygroundObjectsByUserImageFile(aFile)
+function searchButtonClicked () {
+    if ($( '#search-keywords-input' ).val().trim() == '') {
+        alert('Please enter the Search Keyword.')
+        return
+    }
+    $( '#search-keywords-result-count' ).text('')
+    keyword = $( '#search-keywords-input' ).val()
+    offset = 0
+    limit = 100
+    $( '#search-results-current' ).text('')
+
+    getImagesByKeyword(keyword)
+
+    $( '#search-keywords-input' ).val('')
+}
+
+function prevButtonClicked () {
+    offset -= limit
+    getImagesByKeyword(keyword)
+}
+
+function nextButtonClicked () {
+    offset += limit
+    getImagesByKeyword(keyword)
+}
+
+$(document).ready(function() {
+
+    $('.navigate-to-playground').click(function () {
+        $(location).attr('href', getBaseUrl());
     });
-}
 
-function resetViews() {
-    resetObjectBoxes()
-    resetDataSelect()
-}
-
-function resetObjectBoxes() {
-    $('.detecting-wrap').empty()
-}
-
-function drawBox(box, index) {
-    let div = document.createElement('div');
-    div.className = 'detecting-square'
-
-    div.style.left = box.left * RATIO + 'px'
-    div.style.top = box.top * RATIO + 'px'
-    div.style.width = (box.right - box.left) * RATIO + 'px'
-    div.style.height = (box.bottom - box.top) * RATIO + 'px'
-
-    if (index == 0) {
-        div.className += ' is-selected'
-    }
-    let span = document.createElement('span');
-    span.innerHTML = index + 1 + ''
-    div.appendChild(span)
-
-    $('.detecting-wrap').append(div)
-
-    /*
-     Detecting square랑 Attributes 번호 연결시키기
-     */
-    $('.detecting-square').mousedown(function() {
-        $('.detecting-square').removeClass('is-selected');
-        $('.page-item').removeClass('active');
-        $(this).addClass('is-selected');
-        if($(this).is(':first-child')) {
-            $('.page-item:first-child').addClass('active');
-        } else if($(this).is(':nth-child(2)')) {
-            $('.page-item:nth-child(2)').addClass('active');
-        } else if($(this).is(':nth-child(3)')) {
-            $('.page-item:nth-child(3)').addClass('active');
-        } else if($(this).is(':nth-child(4)')) {
-            $('.page-item:nth-child(4)').addClass('active');
-        } else if($(this).is(':nth-child(5)')) {
-            $('.page-item:nth-child(5)').addClass('active');
-        };
+    $('.navigate-to-search').click(function () {
+        $(location).attr('href', getBaseUrl() + 'search.html');
     });
-}
 
-function drawObjectBoxes(boxes) {
-    boxes.forEach((value, index) => {
-        drawBox(value.box, index)
-    });
-}
+    $( '#search-button' ).click(searchButtonClicked)
+    $( '#search-prev-button' ).click(prevButtonClicked)
+    $( '#search-next-button' ).click(nextButtonClicked)
 
-function resetDataSelect() {
-    $('.data-select').empty()
-}
+    // $( '.search-result-image' ).click(function () {
+    //     console.log('product_name : ' + $(this).attr('product_name')
+    //                 + '\ncate : ' + $(this).attr('cate')
+    //                 + '\ntags : ' + $(this).attr('tags'))
+    // })
 
-function drawDataSelect(count) {
-    let li, a
-    for (let i=0; i<count; i++) {
-        li = document.createElement('li')
-        li.className = 'page-item'
-        if (i==0) {
-            li.className += ' active'
-        }
-        a = document.createElement('a')
-        a.innerHTML = i + 1 + ''
-
-        li.appendChild(a)
-
-        $('.data-select').append(li)
+    let keywords = ['티셔츠','t_shirt','티셔츠','t-shirts','tshirts','tee','반팔티','반팔','긴팔','sleeveless','나시티','민소매티','슬리브리스티','Tank','Tee','Henley','Jersey',
+        '크롭탑','crop_top','크롭탑','crop_top','croptop','크롭티','crop','배꼽티','브라','브래지어','bra','brassiere','bralette','브라렛','앞후크','노와이어브라',
+        '블라우스','blouse','블라우스','blouse','bl','Blouse',
+        '셔츠','shirt','셔츠','남방','shirts','nb','Button-Down','Flannel',
+        '스웨터','sweater','니트','스웨터','knit','nt','Turtleneck','Sweater',
+        '스웨트셔츠','sweatshirt','맨투맨','mantoman','mtm','sweatshirt','후드티','hood','후드T','Hoodie','Poncho',
+        '자켓','jaket','자켓','jaket','jk','점퍼','jumper','jp','가디건','cardigan','cd','조끼','베스트','vest','후드집업','Anorak','Bomber','Jacket','Jersey','blazer','Cardigan',
+        '코트','coat','코트','coat', 'ct', '롱패딩', 'long패딩','Parka','Peacoat','Coat',
+        '팬츠','pants','pants','팬츠','바지','슬랙스','slacks','레깅스','leggings','pt','Chinos','Capris','chinos','culottes','Gauchos','Jodhpurs','joggers','leggins','sweatpants',
+        '청바지','jeans','jean','청바지','워싱진','데님진','스키니진','블랙진','화이트진','데님팬츠','데님바지','제깅스','jeggings','jeans',
+        '반바지','shorts','반바지','쇼츠','shorts','숏팬츠','핫팬츠','팬티','panty','panties','속바지','이너팬츠','트렁크','하프팬츠','쇼트팬츠','cutoffs','shorts','sweatshorts','trunks',
+        '치마','skirt','치마','skirt','스커트','sk','치마바지','스커트팬츠','skirtpants','skirt',
+        '드레스','dress','dress','드레스','슬립','가운','slip','gown','원피스','ops','onepiece','기모노','sarong','Caftan','Cape','Dress','Kaftan','Nightdress','Robe','Romper','Shirtdress','Sundress','kimono',
+        '점프슈트','jumpsuit','점프수트','점프슈트','바디수트','바디슈트','bodysuit','jumpsuit','멜빵바지','멜빵팬츠','Jumpsuit']
+    for (let i=0; i<keywords.length; i++) {
+        $('#search_keywords').append('<option value="' + keywords[i] + '">')
     }
-
-    $('.page-item').mousedown(function() {
-        $('.detecting-square').removeClass('is-selected');
-        $('.page-item').removeClass('active');
-        $(this).addClass('active');
-        if($(this).is(':first-child')) {
-            $('.detecting-square:first-child').addClass('is-selected');
-        } else if($(this).is(':nth-child(2)')) {
-            $('.detecting-square:nth-child(2)').addClass('is-selected');
-        } else if($(this).is(':nth-child(3)')) {
-            $('.detecting-square:nth-child(3)').addClass('is-selected');
-        } else if($(this).is(':nth-child(4)')) {
-            $('.detecting-square:nth-child(4)').addClass('is-selected');
-        } else if($(this).is(':nth-child(5)')) {
-            $('.detecting-square:nth-child(5)').addClass('is-selected');
-        };
-    });
-}
-/******
- * ends of Views
- * *****/
-
-/******
- * Utils
- * *****/
-function resizeWithRatio (anImage) {
-    var maxWidth = USER_IMAGE_MAX_SIZE;
-    var maxHeight = USER_IMAGE_MAX_SIZE;
-    var ratio = 0;
-    var width = anImage.width
-    var height = anImage.height
-
-    if (width >= height) {
-        ratio = maxWidth / width;
-        anImage.width = maxWidth;
-        anImage.height = height * ratio;
-    } else {
-        ratio = maxHeight / height;
-        anImage.width = width * ratio;
-        anImage.height = maxHeight;
-    }
-    return anImage;
-}
-
-function dataURLtoFile (dataurl, filename) {
-    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, {type:mime});
-}
-
-function downloadToLocalWithURI(uri, name) {
-    var link = document.createElement("a");
-    link.download = name;
-    link.href = uri;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    delete link;
-}
-/******
- * ends of Utils
- * *****/
-
-/******
- * from stylens.js
- * *****/
-window.readInputFile = function (input) {
-    if (input[0] && input[0].files[0]) {
-        let anImageFile = input[0].files[0]
-
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            let src = e.target.result;
-
-            let anImage = new Image()
-            anImage.onload = function () {
-                anImage.name = anImageFile.name
-                anImage.type = anImageFile.type
-
-                let resizedImage = resizeWithRatio(anImage)
-
-                var canvas = document.createElement('canvas');
-                var context = canvas.getContext("2d");
-                canvas.width = resizedImage.width;
-                canvas.height = resizedImage.height;
-                context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
-
-                console.log('original: \n' + resizedImage.width + ' x ' + resizedImage.height)
-
-                let fileURL = canvas.toDataURL()
-                loadPreviewImage(fileURL, resizedImage)
-
-                // downloadToLocalWithURI(fileURL, resizedImage.name)
-            }
-            anImage.src = src
-        }
-        reader.readAsDataURL(anImageFile);
-    }
-}
-
+})
 },{"stylelens-sdk-js":8}],2:[function(require,module,exports){
 
 /**

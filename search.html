@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="author" content="Ahreum Han X Rano @ BlueHack">
+    <title>Stylens @ BlueHack</title>
+    <link rel="stylesheet" href="dist/spectre.css">
+    <link rel="stylesheet" href="dist/stylens.css">
+    <link rel="stylesheet" href="dist/stylens-search.css">
+    <link rel="stylesheet" href="dist/flickity.css">
+    <script src="dist/jquery-3.2.1.min.js"></script>
+    <script src="dist/flickity.pkgd.min.js"></script>
+    <script src="dist/bundle-search.js"></script> <!-- browserify -->
+
+</head>
+<body>
+
+<header class="header section">
+    <div class="container grid-lg grid-hero">
+        <h1 class="navigate-to-playground">Playground</h1>
+        <h1 class="navigate-to-search">Search</h1>
+        <h2>Stylens Search</h2>
+        <p>ProductAI offers a custom visual search engine for your own product catalog.</p>
+    </div>
+</header>
+
+<section class="section">
+    <div class="container grid-lg">
+        <h3 class="s-title">Input Keyword</h3>
+        <div class="input-search">
+            <input id="search-keywords-input" list="search_keywords" name="search_keyword" /> <button id="search-button">SEARCH</button> <span id="search-keywords-result-count"></span>
+            <datalist id="search_keywords">
+            </datalist>
+        </div>
+    </div>
+</section>
+
+<section class="result-area section">
+    <div class="result-area-div">
+    <div class="container grid-lg">
+        <h3 class="s-title">RESULT ITEMS</h3>
+        <button id="search-prev-button" disabled>< Prev </button> <button id="search-next-button" disabled> Next ></button> <span id="search-results-current"></span>
+        <div class="result-list masonry">
+
+        </div>
+    </div>
+    </div>
+</section>
+
+<footer class="section section-footer">
+    <div id="copyright" class="grid-footer container grid-lg">
+        <h5>BLUEHACK</h5>
+        <p>177, Jeongjail-rom Bundang-gu, Seongnam-si, Gyeonggi-do, Republic of Korea</p>
+        <p>&copy; 2018 BlueHack Inc. All rights reserved.</p>
+        <p><a href="#" target="_blank">About</a> | <a href="#" target="_blank">Blog</a> | <a href="#" target="_blank">Facebook</a> | <a href="#" target="_blank">Contact Us</a> | <span>+82-31-714-5664</span> | <a href="mailto:master@bluehack.net" target="_blank">master@bluehack.net</a> | <a href="#" target="_blank">Terms of Service</a> | <a href="#" target="_blank">Privacy Policy</a></p>
+    </div>
+</footer>
+
+</body>
+</html>
