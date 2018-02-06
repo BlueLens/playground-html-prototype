@@ -11,3 +11,4 @@ LICENSE
 *.sh
 .s3ignore
 main.js
+main-search.js
