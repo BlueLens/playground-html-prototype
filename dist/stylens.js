@@ -26,6 +26,11 @@
 //     }
 // }
 
+function getBaseUrl() {
+    var re = new RegExp(/^.*\//);
+    return re.exec(window.location.href);
+}
+
 /* added dragMoveListener() by rano */
 function dragMoveListener (event) {
   var target = event.target,
@@ -44,6 +49,14 @@ function dragMoveListener (event) {
 }
 
 $(document).ready(function() {
+
+    $('.navigate-to-playground').click(function() {
+        $(location).attr('href', getBaseUrl());
+    });
+
+    $('.navigate-to-search').click(function() {
+        $(location).attr('href', getBaseUrl() + 'search.html');
+    });
 
     $('#input-image').on("change", function () {
         readInputFile($(this))
