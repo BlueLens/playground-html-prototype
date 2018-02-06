@@ -9,11 +9,11 @@
     <title>Stylens @ BlueHack</title>
     <link rel="stylesheet" href="dist/spectre.css">
     <link rel="stylesheet" href="dist/stylens.css">
+    <link rel="stylesheet" href="dist/stylens-search.css">
     <link rel="stylesheet" href="dist/flickity.css">
     <script src="dist/jquery-3.2.1.min.js"></script>
     <script src="dist/flickity.pkgd.min.js"></script>
-    <script src="dist/stylens.js"></script>
-    <!--<script src="bundle.js"></script> &lt;!&ndash; browserify &ndash;&gt;-->
+    <script src="dist/bundle-search.js"></script> <!-- browserify -->
 
 </head>
 <body>
@@ -30,61 +30,23 @@
 <section class="section">
     <div class="container grid-lg">
         <h3 class="s-title">Input Keyword</h3>
-        <div class="search-input">
-            <input>
+        <div class="input-search">
+            <input id="search-keywords-input" list="search_keywords" name="search_keyword" /> <button id="search-button">SEARCH</button> <span id="search-keywords-result-count"></span>
+            <datalist id="search_keywords">
+            </datalist>
         </div>
     </div>
 </section>
 
 <section class="result-area section">
+    <div class="result-area-div">
     <div class="container grid-lg">
-        <h3 class="s-title">ITEM RESULTS</h3>
+        <h3 class="s-title">RESULT ITEMS</h3>
+        <button id="search-prev-button" disabled>< Prev </button> <button id="search-next-button" disabled> Next ></button> <span id="search-results-current"></span>
         <div class="result-list masonry">
-            <figure class="figure">
-                <img src="data/img00.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img01.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img02.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img03.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img04.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img05.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img06.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img07.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img08.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img09.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img10.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
+
         </div>
+    </div>
     </div>
 </section>
 
