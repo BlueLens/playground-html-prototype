@@ -3646,8 +3646,8 @@ Emitter.prototype.hasListeners = function(event){
       if (data.hasOwnProperty('id')) {
         obj['id'] = ApiClient.convertToType(data['id'], 'String');
       }
-      if (data.hasOwnProperty('product_name')) {
-        obj['product_name'] = ApiClient.convertToType(data['product_name'], 'String');
+      if (data.hasOwnProperty('name')) {
+        obj['name'] = ApiClient.convertToType(data['name'], 'String');
       }
       if (data.hasOwnProperty('product_id')) {
         obj['product_id'] = ApiClient.convertToType(data['product_id'], 'String');
@@ -3703,9 +3703,9 @@ Emitter.prototype.hasListeners = function(event){
    */
   exports.prototype['id'] = undefined;
   /**
-   * @member {String} product_name
+   * @member {String} name
    */
-  exports.prototype['product_name'] = undefined;
+  exports.prototype['name'] = undefined;
   /**
    * @member {String} product_id
    */

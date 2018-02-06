@@ -31,7 +31,7 @@ function getImagesByKeyword (keyword) {
 }
 
 function generateResultImage (image) {
-    let product_name = image.product_name ? image.product_name : '""'
+    let product_name = image.name ? image.name : '""'
     let cate = image.cate ? image.cate : '""'
     let tags = image.tags ? image.tags : '""'
     let image_src = image.main_image_mobile_full ? image.main_image_mobile_full : '""'
