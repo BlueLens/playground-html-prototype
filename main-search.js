@@ -31,14 +31,15 @@ function getImagesByKeyword (keyword) {
 }
 
 function generateResultImage (image) {
+    console.log(image.name)
     let product_name = image.name ? image.name : '""'
     let cate = image.cate ? image.cate : '""'
     let tags = image.tags ? image.tags : '""'
     let image_src = image.main_image_mobile_full ? image.main_image_mobile_full : '""'
 
     return '<figure class="figure search-result-image"' +
-        'product_name=' + product_name +
-        ' cate="' + cate +
+        'product_name="' + product_name +
+        '" cate="' + cate +
         '" tags="' + tags +
         '"> <img src="' + image_src + '" alt="" />' +
         '<figcaption>' + keyword + '</figcaption> </figure>'
