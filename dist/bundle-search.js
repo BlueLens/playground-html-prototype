@@ -32,7 +32,6 @@ function getImagesByKeyword (keyword) {
 }
 
 function generateResultImage (image) {
-    console.log(image.name)
     let product_name = image.name ? image.name : '""'
     let cate = image.cate ? image.cate : '""'
     let tags = image.tags ? image.tags : '""'
@@ -60,6 +59,8 @@ function drawResults (keyword, data) {
     if (data.images.length == 0) {
         $( '#search-results-current' ).text('( )')
     }
+
+    alert(data.images.length)
 
     for(let i=0; i<data.images.length; i++) {
         $('.result-list').append(generateResultImage(data.images[i]))

@@ -31,7 +31,6 @@ function getImagesByKeyword (keyword) {
 }
 
 function generateResultImage (image) {
-    console.log(image.name)
     let product_name = image.name ? image.name : '""'
     let cate = image.cate ? image.cate : '""'
     let tags = image.tags ? image.tags : '""'
