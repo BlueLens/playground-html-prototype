@@ -9,11 +9,11 @@
     <title>Stylens @ BlueHack</title>
     <link rel="stylesheet" href="dist/spectre.css">
     <link rel="stylesheet" href="dist/stylens.css">
-    <link rel="stylesheet" href="dist/stylens-search.css">
+    <link rel="stylesheet" href="dist/stylens-image-box.css">
     <link rel="stylesheet" href="dist/flickity.css">
     <script src="dist/jquery-3.2.1.min.js"></script>
     <script src="dist/flickity.pkgd.min.js"></script>
-    <script src="dist/bundle-search.js"></script> <!-- browserify -->
+    <script src="dist/bundle-image-box.js"></script> <!-- browserify -->
 
 </head>
 <body>
@@ -23,7 +23,7 @@
         <h1 class="navigate-to-playground">Playground</h1>
         <h1 class="navigate-to-search">Search</h1>
         <h1 class="navigate-to-image-box">ImageBox</h1>
-        <h2>Stylens Search</h2>
+        <h2>Stylens Image Box</h2>
         <p>ProductAI offers a custom visual search engine for your own product catalog.</p>
     </div>
 </header>
@@ -32,8 +32,8 @@
     <div class="container grid-lg">
         <h3 class="s-title">Input Keyword</h3>
         <div class="input-search">
-            <input id="search-keywords-input" list="search_keywords" name="search_keyword" /> <button class="button" id="search-button">SEARCH</button> <span id="search-keywords-result-count"></span>
-            <datalist id="search_keywords">
+            <input id="search-image-box-input" list="search_image_box_categories" name="search_image_box_category" /> <button class="button" id="search-image-box-button">SEARCH</button> <span id="search-keywords-result-count"></span>
+            <datalist id="search_image_box_categories">
             </datalist>
         </div>
     </div>
@@ -41,13 +41,16 @@
 
 <section class="result-area section">
     <div class="result-area-div">
-    <div class="container grid-lg">
-        <h3 class="s-title">RESULT ITEMS</h3>
-        <button id="search-prev-button" disabled>< Prev </button> <button id="search-next-button" disabled> Next ></button> <span id="search-results-current"></span>
-        <div class="result-list masonry">
+        <div class="container grid-lg">
+            <h3 class="s-title">RESULT ITEMS</h3>
+            <button id="search-prev-button" disabled>< Prev </button> <button id="search-next-button" disabled> Next ></button> <span id="search-results-current"></span>
+            <div class="result-list masonry">
 
+            </div>
+
+            <button class="button button-save">SAVE</button>
         </div>
-    </div>
+
     </div>
 </section>
 

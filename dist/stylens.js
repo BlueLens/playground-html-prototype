@@ -58,6 +58,11 @@ $(document).ready(function() {
         $(location).attr('href', getBaseUrl() + 'search.html');
     });
 
+    $('.navigate-to-image-box').click(function() {
+        $(location).attr('href', getBaseUrl() + 'image_box.html');
+    });
+
+
     $('#input-image').on("change", function () {
         readInputFile($(this))
     })

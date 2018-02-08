@@ -12,3 +12,4 @@ LICENSE
 .s3ignore
 main.js
 main-search.js
+main-image-box.js

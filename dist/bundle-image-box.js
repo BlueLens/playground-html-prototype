@@ -6,47 +6,57 @@ let playground_api = new StyleApi.PlaygroundApi()
 /******
  * APIs
  * *****/
-keyword = ''
+category = ''
 offset = 0
 limit = 100
 
-function getImagesByKeyword (keyword) {
+function getImagesDatasetByCategory (category) {
     $( '#search-prev-button' ).prop("disabled", true)
     $( '#search-next-button' ).prop("disabled", true)
     $('.result-list').empty()
 
+    let source = 'deepfashion'
     var opts = {
-        'keyword': keyword,
+        'category': category,
         'offset': offset,
         'limit': limit
     };
-    playground_api.getImagesByKeyword(opts, function (error, data, response) {
+    playground_api.getImagesDatasetByCategory(source, opts, function (error, data, response) {
         if (error) {
             console.error(error);
         } else {
-            console.log('getImagesByKeywords API called successfully.\n Returned data: ')
+            console.log('getImagesDatasetByCategory API called successfully.\n Returned data: ')
             console.log(data)
-            drawResults(keyword, data.data)
+            drawResults(category, data.data)
         }
     })
 }
 
-function generateResultImage (image) {
-    let product_name = image.name ? image.name : '""'
-    let cate = image.cate ? image.cate : '""'
-    let tags = image.tags ? image.tags : '""'
-    let image_src = image.main_image_mobile_full ? image.main_image_mobile_full : '""'
+function updateImagesDatasetByIds (ids, valid) {
+    let source = 'deepfashion'
+    playground_api.updateImagesDatasetByIds(source, ids, valid, function (error, data, response) {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log('updateImagesDatasetByIds API called successfully.\n Returned data: ')
+            console.log(data)
+        }
 
-    return '<figure class="figure search-result-image"' +
-        'product_name="' + product_name +
-        '" cate="' + cate +
-        '" tags="' + tags +
-        '"> <img src="' + image_src + '" alt="" />' +
-        '<figcaption>' + keyword + '</figcaption> </figure>'
+        getImagesDatasetByCategory(category)
+    })
 }
 
-function drawResults (keyword, data) {
-    $( '#search-keywords-result-count' ).text('(' + keyword + ' : ' + data.total_count + '개)')
+function generateResultImage (image) {
+    let _id = image.id ? image.id : '""'
+    let url_with_box = image.url_with_box ? image.url_with_box : '""'
+
+    return '<figure class="figure image-box-result" is-selected="false" ' +
+        '_id="' + _id +
+        '"> <img src="' + url_with_box + '" alt="" /></figure>'
+}
+
+function drawResults (category, data) {
+    $( '#search-keywords-result-count' ).text('(' + category + ' : ' + data.total_count + '개)')
 
     if (offset > 0) {
         $( '#search-prev-button' ).prop("disabled", false)
@@ -65,9 +75,24 @@ function drawResults (keyword, data) {
     }
 
     $( '.search-result-image' ).click(function () {
-        console.log('product_name : ' + $(this).attr('product_name')
-            + '\ncate : ' + $(this).attr('cate')
-            + '\ntags : ' + $(this).attr('tags'))
+        console.log('_id : ' + $(this).attr('_id'))
+    })
+
+    $( '.image-box-result' ).click(function () {
+        if ( $(this).attr('is-selected') == 'false' ) {
+            $(this).attr('is-selected', 'true')
+        } else {
+            $(this).attr('is-selected', 'false')
+        }
+        // $(this).attr('is-selected', !$(this).attr('is-selected'))
+
+        $( '.image-box-result' ).each(function () {
+            if ($(this).attr('is-selected') == 'true') {
+                $(this).append('<figcaption>🚨🚨🚨SELECT🚨🚨🚨</figcaption>')
+            } else {
+                $(this).children('figcaption').remove()
+            }
+        })
     })
 }
 
@@ -76,30 +101,48 @@ function getBaseUrl () {
     return re.exec(window.location.href);
 }
 
-function searchButtonClicked () {
-    if ($( '#search-keywords-input' ).val().trim() == '') {
-        alert('Please enter the Search Keyword.')
+function searchImageBoxButtonClicked () {
+    if ($( '#search-image-box-input' ).val().trim() == '') {
+        alert('Please enter the Search Category.')
         return
     }
     $( '#search-keywords-result-count' ).text('')
-    keyword = $( '#search-keywords-input' ).val()
+    category = $( '#search-image-box-input' ).val()
     offset = 0
     limit = 100
     $( '#search-results-current' ).text('')
 
-    getImagesByKeyword(keyword)
+    getImagesDatasetByCategory(category)
 
-    $( '#search-keywords-input' ).val('')
+    $( '#search-image-box-input' ).val('')
 }
 
 function prevButtonClicked () {
     offset -= limit
-    getImagesByKeyword(keyword)
+    getImagesDatasetByCategory(category)
 }
 
 function nextButtonClicked () {
     offset += limit
-    getImagesByKeyword(keyword)
+    getImagesDatasetByCategory(category)
+}
+
+function saveButtonClicked () {
+    let valid_ids = []
+    let invalid_ids = []
+    $( '.image-box-result' ).each(function () {
+        if ( $(this).attr('is-selected') == 'false' ) {
+            valid_ids.push($(this).attr('_id'))
+        } else if ( $(this).attr('is-selected') == 'true' ) {
+            invalid_ids.push($(this).attr('_id'))
+        }
+    })
+
+    if (confirm('Category: ' + category + ' \nSELECTED(Invalid) : ' + invalid_ids.length)) {
+        // updateImagesDatasetByIds(valid_ids, true)
+        updateImagesDatasetByIds(invalid_ids, false)
+    } else {
+    }
 }
 
 $(document).ready(function() {
@@ -116,32 +159,64 @@ $(document).ready(function() {
         $(location).attr('href', getBaseUrl() + 'image_box.html');
     });
 
-    $( '#search-button' ).click(searchButtonClicked)
+    $( '#search-image-box-button' ).click(searchImageBoxButtonClicked)
     $( '#search-prev-button' ).click(prevButtonClicked)
     $( '#search-next-button' ).click(nextButtonClicked)
+    $( '.button-save' ).click(saveButtonClicked)
 
-    // $( '.search-result-image' ).click(function () {
-    //     console.log('product_name : ' + $(this).attr('product_name')
-    //                 + '\ncate : ' + $(this).attr('cate')
-    //                 + '\ntags : ' + $(this).attr('tags'))
-    // })
-
-    let keywords = ['티셔츠','t_shirt','티셔츠','t-shirts','tshirts','tee','반팔티','반팔','긴팔','sleeveless','나시티','민소매티','슬리브리스티','Tank','Tee','Henley','Jersey',
-        '크롭탑','crop_top','크롭탑','crop_top','croptop','크롭티','crop','배꼽티','브라','브래지어','bra','brassiere','bralette','브라렛','앞후크','노와이어브라',
-        '블라우스','blouse','블라우스','blouse','bl','Blouse',
-        '셔츠','shirt','셔츠','남방','shirts','nb','Button-Down','Flannel',
-        '스웨터','sweater','니트','스웨터','knit','nt','Turtleneck','Sweater',
-        '스웨트셔츠','sweatshirt','맨투맨','mantoman','mtm','sweatshirt','후드티','hood','후드T','Hoodie','Poncho',
-        '자켓','jaket','자켓','jaket','jk','점퍼','jumper','jp','가디건','cardigan','cd','조끼','베스트','vest','후드집업','Anorak','Bomber','Jacket','Jersey','blazer','Cardigan',
-        '코트','coat','코트','coat', 'ct', '롱패딩', 'long패딩','Parka','Peacoat','Coat',
-        '팬츠','pants','pants','팬츠','바지','슬랙스','slacks','레깅스','leggings','pt','Chinos','Capris','chinos','culottes','Gauchos','Jodhpurs','joggers','leggins','sweatpants',
-        '청바지','jeans','jean','청바지','워싱진','데님진','스키니진','블랙진','화이트진','데님팬츠','데님바지','제깅스','jeggings','jeans',
-        '반바지','shorts','반바지','쇼츠','shorts','숏팬츠','핫팬츠','팬티','panty','panties','속바지','이너팬츠','트렁크','하프팬츠','쇼트팬츠','cutoffs','shorts','sweatshorts','trunks',
-        '치마','skirt','치마','skirt','스커트','sk','치마바지','스커트팬츠','skirtpants','skirt',
-        '드레스','dress','dress','드레스','슬립','가운','slip','gown','원피스','ops','onepiece','기모노','sarong','Caftan','Cape','Dress','Kaftan','Nightdress','Robe','Romper','Shirtdress','Sundress','kimono',
-        '점프슈트','jumpsuit','점프수트','점프슈트','바디수트','바디슈트','bodysuit','jumpsuit','멜빵바지','멜빵팬츠','Jumpsuit']
-    for (let i=0; i<keywords.length; i++) {
-        $('#search_keywords').append('<option value="' + keywords[i] + '">')
+    let image_box_categories = ['Anorak',
+        'Blazer',
+        'Blouse',
+        'Bomber',
+        'Button-Down',
+        'Cardigan       ',
+        'Flannel        ',
+        'Halter         ',
+        'Henley         ',
+        'Hoodie         ',
+        'Jacket         ',
+        'Jersey         ',
+        'Parka          ',
+        'Peacoat        ',
+        'Poncho         ',
+        'Sweater        ',
+        'Tank           ',
+        'Tee            ',
+        'Top            ',
+        'Turtleneck     ',
+        'Capris         ',
+        'Chinos         ',
+        'Culottes       ',
+        'Cutoffs        ',
+        'Gauchos        ',
+        'Jeans          ',
+        'Jeggings       ',
+        'Jodhpurs       ',
+        'Joggers        ',
+        'Leggings       ',
+        'Sarong         ',
+        'Shorts         ',
+        'Skirt          ',
+        'Sweatpants     ',
+        'Sweatshorts    ',
+        'Trunks         ',
+        'Caftan         ',
+        'Cape           ',
+        'Coat           ',
+        'Coverup        ',
+        'Dress          ',
+        'Jumpsuit       ',
+        'Kaftan         ',
+        'Kimono         ',
+        'Nightdress     ',
+        'Onesie         ',
+        'Robe           ',
+        'Romper         ',
+        'Shirtdress     ',
+        'Sundress       ']
+    for (let i=0; i<image_box_categories.length; i++) {
+        image_box_category = image_box_categories[i].trim()
+        $('#search_image_box_categories').append('<option value="' + image_box_category + '">')
     }
 
 })

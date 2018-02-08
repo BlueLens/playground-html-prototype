@@ -4,8 +4,6 @@
 
 .result-list {
     width: 100%;
-    height: 800px;
-    overflow: scroll;
 }
 
 .button {
@@ -19,4 +17,8 @@
     font-size: 15px;
     margin: 4px 2px;
     cursor: pointer;
+}
+
+.button-save {
+    background-color: #f44336; /* Red */
 }
