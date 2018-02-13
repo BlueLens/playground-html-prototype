@@ -3,6 +3,9 @@ let StyleApi = require('stylelens-sdk-js');
 
 let playground_api = new StyleApi.PlaygroundApi()
 
+let valid_done=false;
+let invalid_done=true;
+
 /******
  * APIs
  * *****/
@@ -32,17 +35,30 @@ function getImagesDatasetByCategory (category) {
     })
 }
 
-function updateImagesDatasetByIds (ids, valid) {
+function updateImagesDatasetByIds (valid_ids, invalid_ids, valid) {
     let source = 'deepfashion'
+    let ids
+    if (valid) {
+        ids = valid_ids
+    } else {
+        ids = invalid_ids
+    }
+    console.log(valid)
     playground_api.updateImagesDatasetByIds(source, ids, valid, function (error, data, response) {
         if (error) {
             console.error(error);
         } else {
             console.log('updateImagesDatasetByIds API called successfully.\n Returned data: ')
             console.log(data)
-        }
 
-        getImagesDatasetByCategory(category)
+            if (valid) {
+                updateImagesDatasetByIds(null, invalid_ids, false)
+            }
+
+            if (!valid) {
+                getImagesDatasetByCategory(category)
+            }
+        }
     })
 }
 
@@ -56,7 +72,7 @@ function generateResultImage (image) {
 }
 
 function drawResults (category, data) {
-    $( '#search-keywords-result-count' ).text('(' + category + ' : ' + data.total_count + '개)')
+    $( '#search-keywords-result-count' ).text(getCategoryName(category) + ' - (' + category + ' : ' + data.total_count + '개)')
 
     if (offset > 0) {
         $( '#search-prev-button' ).prop("disabled", false)
@@ -84,16 +100,62 @@ function drawResults (category, data) {
         } else {
             $(this).attr('is-selected', 'false')
         }
-        // $(this).attr('is-selected', !$(this).attr('is-selected'))
+
+        $( '.image-box-result' ).each(function () {
+            $(this).children('figcaption').remove()
+        })
 
         $( '.image-box-result' ).each(function () {
             if ($(this).attr('is-selected') == 'true') {
-                $(this).append('<figcaption>🚨🚨🚨SELECT🚨🚨🚨</figcaption>')
-            } else {
-                $(this).children('figcaption').remove()
+                $(this).append('<figcaption class="bg-select">⭐️⭐️SELECT⭐️⭐️</figcaption>')
             }
         })
     })
+}
+
+function getCategoryName (category) {
+    switch (category) {
+        case 'Anorak':
+        case 'Bomber':
+        case 'Jacket':
+        case 'Blazer':
+        case 'Cardigan':
+            return 'jacket'
+
+        case 'Turtleneck':
+        case 'Sweater':
+            return 'sweater'
+
+        case 'Tank':
+        case 'Tee':
+        case 'Henley':
+        case 'Jersey':
+        case 'Top':
+            return 't_shirt'
+
+        case 'Sarong':
+        case 'Caftan':
+        case 'Cape':
+        case 'Dress':
+        case 'Kaftan':
+        case 'Nightdress':
+        case 'Robe':
+        case 'Romper':
+        case 'Shirtdress':
+        case 'Sundress':
+        case 'Kimono':
+            return 'dress'
+
+        case 'Parka':
+        case 'Peacoat':
+        case 'Coat':
+            return 'coat'
+
+        default:
+            return ''
+    }
+
+
 }
 
 function getBaseUrl () {
@@ -107,14 +169,14 @@ function searchImageBoxButtonClicked () {
         return
     }
     $( '#search-keywords-result-count' ).text('')
-    category = $( '#search-image-box-input' ).val()
+    category = $( '#search-image-box-input' ).val().trim()
     offset = 0
     limit = 100
     $( '#search-results-current' ).text('')
 
     getImagesDatasetByCategory(category)
 
-    $( '#search-image-box-input' ).val('')
+    // $( '#search-image-box-input' ).val('')
 }
 
 function prevButtonClicked () {
@@ -139,8 +201,9 @@ function saveButtonClicked () {
     })
 
     if (confirm('Category: ' + category + ' \nSELECTED(Invalid) : ' + invalid_ids.length)) {
-        // updateImagesDatasetByIds(valid_ids, true)
-        updateImagesDatasetByIds(invalid_ids, false)
+        updateImagesDatasetByIds(valid_ids, invalid_ids, true)
+
+
     } else {
     }
 }
@@ -171,14 +234,14 @@ $(document).ready(function() {
         'Button-Down',
         'Cardigan       ',
         'Flannel        ',
-        'Halter         ',
+        // 'Halter         ',
         'Henley         ',
         'Hoodie         ',
         'Jacket         ',
         'Jersey         ',
         'Parka          ',
         'Peacoat        ',
-        'Poncho         ',
+        // 'Poncho         ',
         'Sweater        ',
         'Tank           ',
         'Tee            ',
@@ -201,19 +264,20 @@ $(document).ready(function() {
         'Sweatshorts    ',
         'Trunks         ',
         'Caftan         ',
-        'Cape           ',
+        // 'Cape           ',
         'Coat           ',
-        'Coverup        ',
+        // 'Coverup        ',
         'Dress          ',
         'Jumpsuit       ',
         'Kaftan         ',
         'Kimono         ',
-        'Nightdress     ',
-        'Onesie         ',
+        // 'Nightdress     ',
+        // 'Onesie         ',
         'Robe           ',
         'Romper         ',
-        'Shirtdress     ',
-        'Sundress       ']
+        // 'Shirtdress     ',
+        // 'Sundress       '
+    ]
     for (let i=0; i<image_box_categories.length; i++) {
         image_box_category = image_box_categories[i].trim()
         $('#search_image_box_categories').append('<option value="' + image_box_category + '">')
