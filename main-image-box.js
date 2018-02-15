@@ -5,6 +5,9 @@ let playground_api = new StyleApi.PlaygroundApi()
 let valid_done=false;
 let invalid_done=true;
 
+let category_total_count;
+let category_todo_count;
+
 /******
  * APIs
  * *****/
@@ -29,7 +32,7 @@ function getImagesDatasetByCategory (category) {
         } else {
             console.log('getImagesDatasetByCategory API called successfully.\n Returned data: ')
             console.log(data)
-            drawResults(category, data.data)
+            drawResults(data.data)
         }
     })
 }
@@ -61,6 +64,25 @@ function updateImagesDatasetByIds (valid_ids, invalid_ids, valid) {
     })
 }
 
+function getImagesDatasetCategoryCountByCategory(category) {
+    let source = 'deepfashion'
+    var opts = {
+        'category': category
+    }
+    playground_api.getImagesDatasetCategoriesCountsByCategory(source, opts, function (error, data, response) {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log('getImagesDatasetCategoriesCountsByCategory API called successfully.\n Returned data: ')
+            console.log(data)
+
+            category_total_count = data.data.total_count
+            category_todo_count = parseInt(data.data.valid_count) + parseInt(data.data.invalid_count)
+            drawCountResults(category)
+        }
+    })
+}
+
 function generateResultImage (image) {
     let _id = image.id ? image.id : '""'
     let url_with_box = image.url_with_box ? image.url_with_box : '""'
@@ -70,8 +92,7 @@ function generateResultImage (image) {
         '"> <img src="' + url_with_box + '" alt="" /></figure>'
 }
 
-function drawResults (category, data) {
-    $( '#search-keywords-result-count' ).text(getCategoryName(category) + ' - (' + category + ' : ' + data.total_count + '개)')
+function drawResults (data) {
 
     if (offset > 0) {
         $( '#search-prev-button' ).prop("disabled", false)
@@ -112,14 +133,23 @@ function drawResults (category, data) {
     })
 }
 
+function drawCountResults (category) {
+    $( '#search-keywords-result-count' ).text(getCategoryName(category) + ' - (' + category + ' : ' + category_todo_count + '/' + category_total_count + ')')
+}
+
 function getCategoryName (category) {
     switch (category) {
         case 'Anorak':
         case 'Bomber':
         case 'Jacket':
         case 'Blazer':
-        case 'Cardigan':
             return 'jacket'
+
+        case 'Blouse':
+            return 'blouse'
+
+        case 'Cardigan':
+            return 'cardigan'
 
         case 'Turtleneck':
         case 'Sweater':
@@ -173,6 +203,7 @@ function searchImageBoxButtonClicked () {
     limit = 100
     $( '#search-results-current' ).text('')
 
+    getImagesDatasetCategoryCountByCategory(category)
     getImagesDatasetByCategory(category)
 
     // $( '#search-image-box-input' ).val('')
