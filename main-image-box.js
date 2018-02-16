@@ -59,6 +59,7 @@ function updateImagesDatasetByIds (valid_ids, invalid_ids, valid) {
 
             if (!valid) {
                 getImagesDatasetByCategory(category)
+                getImagesDatasetCategoryCountByCategory(category)
             }
         }
     })
@@ -220,6 +221,8 @@ function nextButtonClicked () {
 }
 
 function saveButtonClicked () {
+    $( '#search-keywords-result-count' ).text('')
+
     let valid_ids = []
     let invalid_ids = []
     $( '.image-box-result' ).each(function () {

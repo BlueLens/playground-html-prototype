@@ -1,322 +1,179 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 let StyleApi = require('stylelens-sdk-js');
 
+const TODO = 'todo'
+const IN_PROGRESS = 'in_progress'
+const DONE = 'done'
+
+var member = [
+    { name: 'player', categories: ['Dress'], score: 0 },
+    { name: 'cj', categories: ['Anorak', 'Bomber', 'Jacket', 'Parka', 'Blazer', 'Peacoat', 'Coat', 'Robe', 'Romper'], score: 0 },
+    { name: 'rano', categories: ['Tank', 'Henley', 'Jersey', 'Top'], score: 0 },
+    { name: 'k', categories: ['Tee'], score: 0 },
+    { name: 'lim', categories: ['Cardigan', 'Turtleneck', 'Sweater'], score: 0 },
+    { name: 'lion', categories: ['Blouse'], score: 0 }
+]
+var cates;
+
 let playground_api = new StyleApi.PlaygroundApi()
-
-let valid_done=false;
-let invalid_done=true;
-
-let category_total_count;
-let category_todo_count;
-
+var API_QUEUE_STATUS = TODO
 /******
  * APIs
  * *****/
-category = ''
-offset = 0
-limit = 100
-
-function getImagesDatasetByCategory (category) {
-    $( '#search-prev-button' ).prop("disabled", true)
-    $( '#search-next-button' ).prop("disabled", true)
-    $('.result-list').empty()
-
-    let source = 'deepfashion'
-    var opts = {
-        'category': category,
-        'offset': offset,
-        'limit': limit
-    };
-    playground_api.getImagesDatasetByCategory(source, opts, function (error, data, response) {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log('getImagesDatasetByCategory API called successfully.\n Returned data: ')
-            console.log(data)
-            drawResults(data.data)
-        }
-    })
-}
-
-function updateImagesDatasetByIds (valid_ids, invalid_ids, valid) {
-    let source = 'deepfashion'
-    let ids
-    if (valid) {
-        ids = valid_ids
-    } else {
-        ids = invalid_ids
-    }
-    console.log(valid)
-    playground_api.updateImagesDatasetByIds(source, ids, valid, function (error, data, response) {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log('updateImagesDatasetByIds API called successfully.\n Returned data: ')
-            console.log(data)
-
-            if (valid) {
-                updateImagesDatasetByIds(null, invalid_ids, false)
-            }
-
-            if (!valid) {
-                getImagesDatasetByCategory(category)
-                getImagesDatasetCategoryCountByCategory(category)
-            }
-        }
-    })
-}
-
-function getImagesDatasetCategoryCountByCategory(category) {
+function getImagesDatasetCategoryCountByCategory (category) {
     let source = 'deepfashion'
     var opts = {
         'category': category
     }
     playground_api.getImagesDatasetCategoriesCountsByCategory(source, opts, function (error, data, response) {
+        if (API_QUEUE_STATUS != IN_PROGRESS) {
+            return
+        }
+
         if (error) {
             console.error(error);
-        } else {
-            console.log('getImagesDatasetCategoriesCountsByCategory API called successfully.\n Returned data: ')
-            console.log(data)
 
-            category_total_count = data.data.total_count
-            category_todo_count = parseInt(data.data.valid_count) + parseInt(data.data.invalid_count)
-            drawCountResults(category)
+            setCategories(category, null, error)
+        } else {
+            // console.log('getImagesDatasetCategoriesCountsByCategory API called successfully.\n Returned data: ')
+            // console.log(data)
+
+            setCategories(category, data.data, null)
         }
     })
 }
 
-function generateResultImage (image) {
-    let _id = image.id ? image.id : '""'
-    let url_with_box = image.url_with_box ? image.url_with_box : '""'
-
-    return '<figure class="figure image-box-result" is-selected="false" ' +
-        '_id="' + _id +
-        '"> <img src="' + url_with_box + '" alt="" /></figure>'
+function retrieveCategoryCounts () {
+    API_QUEUE_STATUS = IN_PROGRESS
+    for (var [key, value] of cates) {
+        value.status = IN_PROGRESS
+        getImagesDatasetCategoryCountByCategory(key)
+    }
 }
 
-function drawResults (data) {
-
-    if (offset > 0) {
-        $( '#search-prev-button' ).prop("disabled", false)
-    }
-    if (data.images.length == limit) {
-        $( '#search-next-button' ).prop("disabled", false)
-    }
-
-    $( '#search-results-current' ).text(' ( ' + (offset+1) + ' ~ )')
-    if (data.images.length == 0) {
-        $( '#search-results-current' ).text('( )')
-    }
-
-    for(let i=0; i<data.images.length; i++) {
-        $('.result-list').append(generateResultImage(data.images[i]))
-    }
-
-    $( '.search-result-image' ).click(function () {
-        console.log('_id : ' + $(this).attr('_id'))
-    })
-
-    $( '.image-box-result' ).click(function () {
-        if ( $(this).attr('is-selected') == 'false' ) {
-            $(this).attr('is-selected', 'true')
-        } else {
-            $(this).attr('is-selected', 'false')
+function setCategories (category, data, error) {
+    if (!error) {
+        cates.set(category,
+            {status:DONE, total_count: parseFloat(data.total_count), done_count: parseFloat(data.valid_count) + parseFloat(data.invalid_count)})
+        checkStatus()
+    } else {
+        if (API_QUEUE_STATUS == IN_PROGRESS) {
+            getImagesDatasetCategoryCountByCategory(category)
         }
-
-        $( '.image-box-result' ).each(function () {
-            $(this).children('figcaption').remove()
-        })
-
-        $( '.image-box-result' ).each(function () {
-            if ($(this).attr('is-selected') == 'true') {
-                $(this).append('<figcaption class="bg-select">⭐️⭐️SELECT⭐️⭐️</figcaption>')
-            }
-        })
-    })
-}
-
-function drawCountResults (category) {
-    $( '#search-keywords-result-count' ).text(getCategoryName(category) + ' - (' + category + ' : ' + category_todo_count + '/' + category_total_count + ')')
-}
-
-function getCategoryName (category) {
-    switch (category) {
-        case 'Anorak':
-        case 'Bomber':
-        case 'Jacket':
-        case 'Blazer':
-            return 'jacket'
-
-        case 'Blouse':
-            return 'blouse'
-
-        case 'Cardigan':
-            return 'cardigan'
-
-        case 'Turtleneck':
-        case 'Sweater':
-            return 'sweater'
-
-        case 'Tank':
-        case 'Tee':
-        case 'Henley':
-        case 'Jersey':
-        case 'Top':
-            return 't_shirt'
-
-        case 'Sarong':
-        case 'Caftan':
-        case 'Cape':
-        case 'Dress':
-        case 'Kaftan':
-        case 'Nightdress':
-        case 'Robe':
-        case 'Romper':
-        case 'Shirtdress':
-        case 'Sundress':
-        case 'Kimono':
-            return 'dress'
-
-        case 'Parka':
-        case 'Peacoat':
-        case 'Coat':
-            return 'coat'
-
-        default:
-            return ''
-    }
-
-
-}
-
-function getBaseUrl () {
-    var re = new RegExp(/^.*\//);
-    return re.exec(window.location.href);
-}
-
-function searchImageBoxButtonClicked () {
-    if ($( '#search-image-box-input' ).val().trim() == '') {
-        alert('Please enter the Search Category.')
         return
     }
-    $( '#search-keywords-result-count' ).text('')
-    category = $( '#search-image-box-input' ).val().trim()
-    offset = 0
-    limit = 100
-    $( '#search-results-current' ).text('')
-
-    getImagesDatasetCategoryCountByCategory(category)
-    getImagesDatasetByCategory(category)
-
-    // $( '#search-image-box-input' ).val('')
 }
 
-function prevButtonClicked () {
-    offset -= limit
-    getImagesDatasetByCategory(category)
-}
-
-function nextButtonClicked () {
-    offset += limit
-    getImagesDatasetByCategory(category)
-}
-
-function saveButtonClicked () {
-    $( '#search-keywords-result-count' ).text('')
-
-    let valid_ids = []
-    let invalid_ids = []
-    $( '.image-box-result' ).each(function () {
-        if ( $(this).attr('is-selected') == 'false' ) {
-            valid_ids.push($(this).attr('_id'))
-        } else if ( $(this).attr('is-selected') == 'true' ) {
-            invalid_ids.push($(this).attr('_id'))
+function checkStatus () {
+    console.log('Ranking: In progress...')
+    for (var [key, value] of cates) {
+        if (value.status != DONE) {
+            return
         }
-    })
-
-    if (confirm('Category: ' + category + ' \nSELECTED(Invalid) : ' + invalid_ids.length)) {
-        updateImagesDatasetByIds(valid_ids, invalid_ids, true)
-
-
-    } else {
     }
+    API_QUEUE_STATUS = DONE
+    $('.ranking-loading').hide()
+    calcRanking()
+    console.log('Ranking: Done.')
+}
+
+function initData () {
+    cates = new Map();
+
+    cates.set('Dress', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Anorak', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Bomber', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Jacket', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Parka', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Blazer', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Peacoat', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Coat', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Robe', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Romper', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Tank', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Henley', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Jersey', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Top', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Tee', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Cardigan', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Turtleneck', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Sweater', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Blouse', {status:TODO, total_count: 0, done_count: 0})
+
+}
+
+function resetData () {
+    $('.ranking-loading').show()
+
+    for (let i=0; i<member.length; i++) {
+        member[i].score = 0
+    }
+
+    for (var [key, value] of cates) {
+        value.status = TODO
+        value.total_count = 0
+        value.done_count = 0
+    }
+
+    $('.ranking-area').empty()
+
+    API_QUEUE_STATUS = TODO
+}
+
+function calcScore (done, tot) {
+    var score = done / tot * 100
+    return score
+    // return score.toFixed(2)
+}
+
+function calcRanking () {
+    for (let i=0; i<member.length; i++) {
+        var tot_cnt = 0
+        var done_cnt = 0
+        for (let j=0; j<member[i].categories.length; j++) {
+            done_cnt += cates.get(member[i].categories[j]).done_count
+            tot_cnt += cates.get(member[i].categories[j]).total_count
+        }
+        member[i].score = calcScore(done_cnt, tot_cnt)
+    }
+    member.sort(function (a, b) {
+        if (a.score > b.score) {
+            return -1;
+        }
+        if (a.score < b.score) {
+            return 1;
+        }
+        return 0;
+    })
+    drawRanking()
+}
+
+function drawRanking () {
+    for (let i=0; i<member.length; i++) {
+        if (i!=0) {
+            $('.ranking-area').append('<li>' + member[i].name + ' : ' + member[i].score.toFixed(2) + '%</li>')
+            continue
+        }
+        $('.ranking-area').append('<li style="font-weight: bold; color: black;">' + member[i].name + ' : ' + member[i].score.toFixed(2) + '% ㅎㄷㄷ;; </li>')
+    }
+}
+
+function refreshButtonClicked () {
+    resetData()
+    retrieveCategoryCounts()
 }
 
 $(document).ready(function() {
+    initData()
+    resetData()
+    retrieveCategoryCounts()
 
-    $('.navigate-to-playground').click(function () {
-        $(location).attr('href', getBaseUrl());
-    });
-
-    $('.navigate-to-search').click(function () {
-        $(location).attr('href', getBaseUrl() + 'search.html');
-    });
-
-    $('.navigate-to-image-box').click(function () {
-        $(location).attr('href', getBaseUrl() + 'image_box.html');
-    });
-
-    $( '#search-image-box-button' ).click(searchImageBoxButtonClicked)
-    $( '#search-prev-button' ).click(prevButtonClicked)
-    $( '#search-next-button' ).click(nextButtonClicked)
-    $( '.button-save' ).click(saveButtonClicked)
-
-    let image_box_categories = ['Anorak',
-        'Blazer',
-        'Blouse',
-        'Bomber',
-        'Button-Down',
-        'Cardigan       ',
-        'Flannel        ',
-        // 'Halter         ',
-        'Henley         ',
-        'Hoodie         ',
-        'Jacket         ',
-        'Jersey         ',
-        'Parka          ',
-        'Peacoat        ',
-        // 'Poncho         ',
-        'Sweater        ',
-        'Tank           ',
-        'Tee            ',
-        'Top            ',
-        'Turtleneck     ',
-        'Capris         ',
-        'Chinos         ',
-        'Culottes       ',
-        'Cutoffs        ',
-        'Gauchos        ',
-        'Jeans          ',
-        'Jeggings       ',
-        'Jodhpurs       ',
-        'Joggers        ',
-        'Leggings       ',
-        'Sarong         ',
-        'Shorts         ',
-        'Skirt          ',
-        'Sweatpants     ',
-        'Sweatshorts    ',
-        'Trunks         ',
-        'Caftan         ',
-        // 'Cape           ',
-        'Coat           ',
-        // 'Coverup        ',
-        'Dress          ',
-        'Jumpsuit       ',
-        'Kaftan         ',
-        'Kimono         ',
-        // 'Nightdress     ',
-        // 'Onesie         ',
-        'Robe           ',
-        'Romper         ',
-        // 'Shirtdress     ',
-        // 'Sundress       '
-    ]
-    for (let i=0; i<image_box_categories.length; i++) {
-        image_box_category = image_box_categories[i].trim()
-        $('#search_image_box_categories').append('<option value="' + image_box_category + '">')
-    }
-
+    $( '.button-refresh' ).click(refreshButtonClicked)
 })
 },{"stylelens-sdk-js":8}],2:[function(require,module,exports){
 

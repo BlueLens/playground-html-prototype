@@ -23,6 +23,12 @@
     background-color: #f44336; /* Red */
 }
 
+.button-refresh {
+    background-color: dimgray;
+    color: white;
+    cursor: pointer;
+}
+
 .masonry figure figcaption.bg-select {
     position: absolute;
     left: 0;
