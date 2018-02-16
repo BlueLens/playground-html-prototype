@@ -158,7 +158,12 @@ function drawRanking () {
             $('.ranking-area').append('<li>' + member[i].name + ' : ' + member[i].score.toFixed(2) + '%</li>')
             continue
         }
-        $('.ranking-area').append('<li style="font-weight: bold; color: black;">' + member[i].name + ' : ' + member[i].score.toFixed(2) + '% ㅎㄷㄷ;; </li>')
+        if (member[i].name == 'player') {
+            $('.ranking-area').append('<li style="font-weight: bold; color: black;">🔥' + member[i].name + '🔥 : ' + member[i].score.toFixed(2) + '% ㅎㄷㄷ;; </li>')
+        } else {
+            $('.ranking-area').append('<li style="font-weight: bold; color: black;">🔥' + member[i].name + '🔥 : ' + member[i].score.toFixed(2) + '%</li>')
+        }
+
     }
 }
 
