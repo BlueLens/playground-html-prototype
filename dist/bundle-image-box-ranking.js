@@ -31,7 +31,7 @@ function getImagesDatasetCategoryCountByCategory (category) {
         }
 
         if (error) {
-            console.error(error);
+            // console.error(error);
 
             setCategories(category, null, error)
         } else {
@@ -419,7 +419,7 @@ Emitter.prototype.hasListeners = function(event){
      * @type {Number}
      * @default 60000
      */
-    this.timeout = 60000;
+    this.timeout = 5000;
 
     /**
      * If set to false an additional timestamp parameter is added to all API GET calls to

@@ -30,7 +30,7 @@ function getImagesDatasetCategoryCountByCategory (category) {
         }
 
         if (error) {
-            console.error(error);
+            // console.error(error);
 
             setCategories(category, null, error)
         } else {

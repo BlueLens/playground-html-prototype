@@ -24,6 +24,7 @@
 }
 
 .button-refresh {
+    margin-left: 10px;
     background-color: dimgray;
     color: white;
     cursor: pointer;
