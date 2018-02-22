@@ -49,6 +49,7 @@ function updateImagesDatasetByIds (valid_ids, invalid_ids, valid) {
     playground_api.updateImagesDatasetByIds(source, ids, valid, function (error, data, response) {
         if (error) {
             console.error(error);
+            alert('Error!\nSAVE 버튼을 다시 클릭하세요.')
         } else {
             console.log('updateImagesDatasetByIds API called successfully.\n Returned data: ')
             console.log(data)
@@ -242,6 +243,12 @@ function saveButtonClicked () {
 }
 
 $(document).ready(function() {
+
+    $('html').on('keypress', function(event) {
+        if (event.keyCode == 19) {
+            saveButtonClicked()
+        }
+    })
 
     $('.navigate-to-playground').click(function () {
         $(location).attr('href', getBaseUrl());

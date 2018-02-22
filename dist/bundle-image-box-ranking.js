@@ -5,15 +5,8 @@ const TODO = 'todo'
 const IN_PROGRESS = 'in_progress'
 const DONE = 'done'
 
-var member = [
-    { name: 'player', categories: ['Dress'], score: 0 },
-    { name: 'cj', categories: ['Anorak', 'Bomber', 'Jacket', 'Parka', 'Blazer', 'Peacoat', 'Coat', 'Robe', 'Romper'], score: 0 },
-    { name: 'rano', categories: ['Tank', 'Henley', 'Jersey', 'Top'], score: 0 },
-    { name: 'k', categories: ['Tee'], score: 0 },
-    { name: 'lim', categories: ['Cardigan', 'Turtleneck', 'Sweater'], score: 0 },
-    { name: 'lion', categories: ['Blouse'], score: 0 }
-]
-var cates;
+var member
+var cates
 
 let playground_api = new StyleApi.PlaygroundApi()
 var API_QUEUE_STATUS = TODO
@@ -104,6 +97,16 @@ function initData () {
     cates.set('Sweater', {status:TODO, total_count: 0, done_count: 0})
 
     cates.set('Blouse', {status:TODO, total_count: 0, done_count: 0})
+
+
+    member = [
+        { name: 'player', categories: ['Dress'], score: 0 },
+        { name: 'cj', categories: ['Anorak', 'Bomber', 'Jacket', 'Parka', 'Blazer', 'Peacoat', 'Coat', 'Robe', 'Romper'], score: 0 },
+        { name: 'rano', categories: ['Tank', 'Henley', 'Jersey', 'Top'], score: 0 },
+        { name: 'k', categories: ['Tee'], score: 0 },
+        { name: 'lim', categories: ['Cardigan', 'Turtleneck', 'Sweater'], score: 0 },
+        { name: 'lion', categories: ['Blouse'], score: 0 }
+    ]
 
 }
 
