@@ -300,7 +300,37 @@ function dataURLtoFile (dataurl, filename) {
     while(n--){
         u8arr[n] = bstr.charCodeAt(n);
     }
+    // console.log('bbb')
+    // var blob = new Blob([u8arr], {type: mime})
+    // return new File([blob], filename)
     return new File([u8arr], filename, {type:mime});
+
+    // let blob
+    // try {
+    //     blob = new Blob([u8arr], {
+    //         type: mime
+    //     })
+    //     console.log(blob)
+    //
+    //
+    //     // var file =  new File([blob], filename)
+    //     // console.log(file)
+    //     return formData
+    // } catch (e) {
+    //     console.log(e)
+    //     if (e.name == "InvalidStateError") {
+    //         // InvalidStateError (tested on Win8 IE11)
+    //         var bb = new MSBlobBuilder();
+    //         bb.append(u8arr);
+    //         blob = bb.getBlob(mime)
+    //
+    //         console.log(blob)
+    //         return new File([blob], filename)
+    //     } else {
+    //         // We're screwed, blob constructor unsupported entirely
+    //     }
+    // }
+    // return new File([blob], filename)
 }
 
 function downloadToLocalWithURI(uri, name) {
