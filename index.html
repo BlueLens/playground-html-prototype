@@ -22,8 +22,8 @@
 <header class="header section">
     <div class="container grid-lg grid-hero">
         <h1 class="navigate-to-playground">Playground</h1>
-        <h1 class="navigate-to-search">Search</h1>
-        <h1 class="navigate-to-image-box">ImageBox</h1>
+        <!--<h1 class="navigate-to-search">Search</h1>-->
+        <!--<h1 class="navigate-to-image-box">ImageBox</h1>-->
         <h2>Stylens Playground</h2>
         <p>ProductAI offers a custom visual search engine for your own product catalog.</p>
     </div>
@@ -33,21 +33,37 @@
     <div class="container grid-lg">
         <h3 class="s-title">Input Image</h3>
         <div class="input-action">
+            <div class="loader-area">
+                <div class="loader"></div>
+            </div>
             <label class="tooltip" data-tooltip="궁금한 옷, 스타일렌즈가 찾아드릴께요!">
                 <input id="input-image" type="file" value="사진 업로드" accept="image/jpeg"/>
             </label>
-            <div class="input-recent" data-flickity='{ "contain": true, "prevNextButtons": false, "pageDots": false, "cellSelector": ".recent-item", "cellAlign": "left", "initialIndex": 7, "lazyLoad": 4 }'>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img00.jpg"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img01.PNG"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img02.jpg"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img03.PNG"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img04.jpg"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img05.PNG"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img06.jpg"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img07.PNG"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img08.jpg"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img09.PNG"></a>
-                <a href="#" class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img10.PNG"></a>
+            <div class="input-recent" data-flickity='{ "contain": true, "prevNextButtons": false, "pageDots": false, "cellSelector": ".recent-item", "cellAlign": "left", "initialIndex": 0, "lazyLoad": 10 }'>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/THEHANDSOME01.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/THEHANDSOME02.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/THEHANDSOME03.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/THEHANDSOME04.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/THEHANDSOME05.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/THEHANDSOME06.jpg"></a>
+
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/playground01.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/playground02.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/playground03.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/playground04.jpg"></a>
+                <a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/playground05.jpg"></a>
+
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img00.jpg"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img01.PNG"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img02.jpg"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img03.PNG"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img04.jpg"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img05.PNG"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img06.jpg"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img07.PNG"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img08.jpg"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img09.PNG"></a>-->
+                <!--<a class="recent-item"><img src="img/load-placeholder.gif" data-flickity-lazyload="data/img10.PNG"></a>-->
             </div>
         </div>
     </div>
@@ -55,15 +71,14 @@
 
 <section class="detail-area section">
     <div class="container grid-lg">
-
         <div class="detecting-area">
             <h3 class="s-title">Tagging Result</h3>
             <div class="detecting-preview">
-                <img class="detecting-preview-img" src="data/img05.PNG" />
+                <img class="detecting-preview-img" src="data/THEHANDSOME01.jpg" />
                 <div class="detecting-wrap">
-                    <div class="detecting-square is-selected"><span>1</span></div>
-                    <div class="detecting-square"><span>2</span></div>
-                    <div class="detecting-square"><span>3</span></div>
+                    <!--<div class="detecting-square is-selected"><span>1</span></div>-->
+                    <!--<div class="detecting-square"><span>2</span></div>-->
+                    <!--<div class="detecting-square"><span>3</span></div>-->
                 </div>
             </div>
         </div>
@@ -72,43 +87,16 @@
         <div class="data-area">
             <h3 class="s-title">Attributes</h3>
             <ul class="data-select pagination">
-                <li class="page-item active"><a href="#">1</a></li>
-                <li class="page-item"><a href="#">2</a></li>
-                <li class="page-item"><a href="#">3</a></li>
+                <!--<li class="page-item active"><a>1</a></li>-->
+                <!--<li class="page-item"><a>2</a></li>-->
+                <!--<li class="page-item"><a>3</a></li>-->
             </ul>
 
-            <div class="data-desc">
-                <h4>Category</h4>
-                <ul class="item-list">
-                    <li>
-                        <figure class="avatar avatar-sm" data-initial="M"></figure>
-                        <span>man to man</span>
-                        <div class="bar" data-similar-value="76.54%">
-                            <div class="bar-item" role="meteor" style="width:76.54%;" aria-valuenow="76.54" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <figure class="avatar avatar-sm" data-initial="H"></figure>
-                        <span>hoodie</span>
-                        <div class="bar" data-similar-value="55.25%">
-                            <div class="bar-item" role="meteor" style="width:55.25%;" aria-valuenow="55.25" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <figure class="avatar avatar-sm" data-initial="S"></figure>
-                        <span>sweater</span>
-                        <div class="bar" data-similar-value="10.876%">
-                            <div class="bar-item" role="meteor" style="width:10.87%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="data-desc">
+            <div class="data-desc attribute-color">
                 <h4>Color</h4>
                 <ul class="item-list">
-                    <li>
-                        <figure class="avatar avatar-sm" data-initial="B"></figure>
+                    <li class="is-similar">
+                        <figure class="avatar avatar-sm"></figure>
                         <span>Black</span>
                         <div class="bar" data-similar-value="85.00%">
                             <div class="bar-item" role="meteor" style="width:85.00%;" aria-valuenow="85.00" aria-valuemin="0" aria-valuemax="100"></div>
@@ -118,101 +106,141 @@
             </div>
 
             <div class="data-desc">
-                <h4>Category</h4>
+                <h4>Texture</h4>
                 <ul class="item-list">
                     <li>
-                        <figure class="avatar avatar-sm" data-initial="M"></figure>
-                        <span>man to man</span>
+                        <figure class="avatar avatar-sm" data-initial="F"></figure>
+                        <span>Floral</span>
                         <div class="bar" data-similar-value="76.54%">
                             <div class="bar-item" role="meteor" style="width:76.54%;" aria-valuenow="76.54" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </li>
                     <li>
-                        <figure class="avatar avatar-sm" data-initial="H"></figure>
-                        <span>hoodie</span>
+                        <figure class="avatar avatar-sm" data-initial="S"></figure>
+                        <span>Stripe</span>
                         <div class="bar" data-similar-value="55.25%">
                             <div class="bar-item" role="meteor" style="width:55.25%;" aria-valuenow="55.25" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </li>
+                </ul>
+                <div class="attribute-dimmed-view"></div>
+            </div>
+            <div class="data-desc">
+                <h4>Fabric</h4>
+                <ul class="item-list">
                     <li>
-                        <figure class="avatar avatar-sm" data-initial="S"></figure>
-                        <span>sweater</span>
-                        <div class="bar" data-similar-value="10.876%">
-                            <div class="bar-item" role="meteor" style="width:10.87%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                        <figure class="avatar avatar-sm" data-initial="D"></figure>
+                        <span>Denim</span>
+                        <div class="bar" data-similar-value="76.54%">
+                            <div class="bar-item" role="meteor" style="width:76.54%;" aria-valuenow="76.54" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <figure class="avatar avatar-sm" data-initial="N"></figure>
+                        <span>Nylon</span>
+                        <div class="bar" data-similar-value="55.25%">
+                            <div class="bar-item" role="meteor" style="width:55.25%;" aria-valuenow="55.25" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </li>
                 </ul>
+                <div class="attribute-dimmed-view"></div>
             </div>
-
             <div class="data-desc">
-                <h4>Color</h4>
+                <h4>Shape</h4>
                 <ul class="item-list">
                     <li>
                         <figure class="avatar avatar-sm" data-initial="B"></figure>
-                        <span>Black</span>
-                        <div class="bar" data-similar-value="85.00%">
-                            <div class="bar-item" role="meteor" style="width:85.00%;" aria-valuenow="85.00" aria-valuemin="0" aria-valuemax="100"></div>
+                        <span>Boxy</span>
+                        <div class="bar" data-similar-value="76.54%">
+                            <div class="bar-item" role="meteor" style="width:76.54%;" aria-valuenow="76.54" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <figure class="avatar avatar-sm" data-initial="F"></figure>
+                        <span>Fit</span>
+                        <div class="bar" data-similar-value="55.25%">
+                            <div class="bar-item" role="meteor" style="width:55.25%;" aria-valuenow="55.25" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </li>
                 </ul>
+                <div class="attribute-dimmed-view"></div>
             </div>
-
+            <div class="data-desc">
+                <h4>Style</h4>
+                <ul class="item-list">
+                    <li>
+                        <figure class="avatar avatar-sm" data-initial="Y"></figure>
+                        <span>Yoga</span>
+                        <div class="bar" data-similar-value="76.54%">
+                            <div class="bar-item" role="meteor" style="width:76.54%;" aria-valuenow="76.54" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <figure class="avatar avatar-sm" data-initial="R"></figure>
+                        <span>Retro</span>
+                        <div class="bar" data-similar-value="55.25%">
+                            <div class="bar-item" role="meteor" style="width:55.25%;" aria-valuenow="55.25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="attribute-dimmed-view"></div>
+            </div>
         </div>
 
     </div>
 </section>
 
-<section class="result-area section">
-    <div class="container grid-lg">
-        <h3 class="s-title">ITEM</h3>
-        <div class="result-list masonry">
-            <figure class="figure">
-                <img src="data/img00.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img01.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img02.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img03.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img04.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img05.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img06.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img07.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img08.jpg" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img09.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-            <figure class="figure">
-                <img src="data/img10.PNG" alt="" />
-                <figcaption>0.0111</figcaption>
-            </figure>
-        </div>
-    </div>
-</section>
+<!--<section class="result-area section">-->
+    <!--<div class="container grid-lg">-->
+        <!--<h3 class="s-title">ITEM</h3>-->
+        <!--<div class="result-list masonry">-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img00.jpg" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img01.PNG" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img02.jpg" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img03.PNG" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img04.jpg" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img05.PNG" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img06.jpg" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img07.PNG" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img08.jpg" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img09.PNG" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+            <!--<figure class="figure">-->
+                <!--<img src="data/img10.PNG" alt="" />-->
+                <!--<figcaption>0.0111</figcaption>-->
+            <!--</figure>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</section>-->
 
 <footer class="section section-footer">
     <div id="copyright" class="grid-footer container grid-lg">

@@ -72,6 +72,7 @@ $(document).ready(function() {
         $(this).addClass('is-selected');
         var path = $(this).find('img').attr('src');
         $('.detecting-preview-img').attr('src', path);
+        loadImage(path)
     });
 
     /*
@@ -86,7 +87,11 @@ $(document).ready(function() {
             'height': detectingWrapH
         });
     }).each(function() {
-        if(this.complete) $('.detecting-preview-img').load();
+        if(this.complete) {
+            // $('.detecting-preview-img').load()
+            // console.log(this.getAttribute('src'))
+        }
+        loadImage(this.getAttribute('src'))
     });
     
     /*
@@ -129,9 +134,10 @@ $(document).ready(function() {
         Attribute에서 닯은 퍼센트가 50이 넘어가면 class 부여하기
     */
     $('.bar-item').each(function() {
-        if($(this).attr('aria-valuenow') > 50) {
-            $(this).parent('div').parent('li').addClass('is-similar');
-        }
+        $(this).parent('div').parent('li').addClass('is-similar');
+        // if($(this).attr('aria-valuenow') > 50) {
+        //     $(this).parent('div').parent('li').addClass('is-similar');
+        // }
     });
 
     /* for Tagging Resut area */

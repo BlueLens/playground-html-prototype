@@ -28,11 +28,14 @@ function getPlaygroundObjectsByUserImageFile (file) {
     playground_api.getPlaygroundObjectsByUserImageFile(file, function(error, data, response) {
         if (error) {
             console.error(error);
+            showLoader(false)
         } else {
             console.log('getPlaygroundObjectsByUserImageFile API called successfully.\n Returned data: ')
             console.log(data.data.boxes)
+            showLoader(false)
             drawObjectBoxes(data.data.boxes)
             drawDataSelect(data.data.boxes.length)
+            drawAttributes(data.data.boxes)
         }
     })
 }
@@ -45,6 +48,25 @@ function getPlaygroundObjectsByUserImageFile (file) {
  * *****/
 const USER_IMAGE_MAX_SIZE = 380
 let RATIO
+var attributes = {
+    color: [
+        {
+            name: 'black',
+            score: 0.77,
+            style: 'black'
+        },
+        {
+            name: 'black',
+            score: 0.77,
+            style: 'black'
+        },
+        {
+            name: 'black',
+            score: 0.77,
+            style: 'black'
+        }
+    ]
+}
 
 function loadPreviewImage(url, anImage) {
     let preview_img = $('.detecting-preview-img');
@@ -75,7 +97,7 @@ function loadPreviewImage(url, anImage) {
             'height': detectingWrapH
         });
 
-        console.log('ratio before : ' + RATIO)
+        // console.log('ratio before : ' + RATIO)
 
         if (anImage.width >= anImage.height) {
             RATIO = detectingWrapW / USER_IMAGE_MAX_SIZE
@@ -84,7 +106,7 @@ function loadPreviewImage(url, anImage) {
         }
     }).each(function() {
         if(this.complete) {
-            preview_img.load();
+            // preview_img.load();
         }
 
         let aFile = dataURLtoFile(url, anImage.name)
@@ -93,8 +115,10 @@ function loadPreviewImage(url, anImage) {
 }
 
 function resetViews() {
+    showLoader(true)
     resetObjectBoxes()
     resetDataSelect()
+    resetAttributes()
 }
 
 function resetObjectBoxes() {
@@ -125,17 +149,23 @@ function drawBox(box, index) {
     $('.detecting-square').mousedown(function() {
         $('.detecting-square').removeClass('is-selected');
         $('.page-item').removeClass('active');
-        $(this).addClass('is-selected');
+
+        // $(this).addClass('is-selected');
         if($(this).is(':first-child')) {
-            $('.page-item:first-child').addClass('active');
+            objectBoxSelected(1)
+            // $('.page-item:first-child').addClass('active');
         } else if($(this).is(':nth-child(2)')) {
-            $('.page-item:nth-child(2)').addClass('active');
+            objectBoxSelected(2)
+            // $('.page-item:nth-child(2)').addClass('active');
         } else if($(this).is(':nth-child(3)')) {
-            $('.page-item:nth-child(3)').addClass('active');
+            objectBoxSelected(3)
+            // $('.page-item:nth-child(3)').addClass('active');
         } else if($(this).is(':nth-child(4)')) {
-            $('.page-item:nth-child(4)').addClass('active');
+            objectBoxSelected(4)
+            // $('.page-item:nth-child(4)').addClass('active');
         } else if($(this).is(':nth-child(5)')) {
-            $('.page-item:nth-child(5)').addClass('active');
+            objectBoxSelected(5)
+            // $('.page-item:nth-child(5)').addClass('active');
         };
     });
 }
@@ -169,20 +199,75 @@ function drawDataSelect(count) {
     $('.page-item').mousedown(function() {
         $('.detecting-square').removeClass('is-selected');
         $('.page-item').removeClass('active');
-        $(this).addClass('active');
+
+        // $(this).addClass('active');
         if($(this).is(':first-child')) {
-            $('.detecting-square:first-child').addClass('is-selected');
+            objectBoxSelected(1)
+            // $('.detecting-square:first-child').addClass('is-selected');
         } else if($(this).is(':nth-child(2)')) {
-            $('.detecting-square:nth-child(2)').addClass('is-selected');
+            objectBoxSelected(2)
+            // $('.detecting-square:nth-child(2)').addClass('is-selected');
         } else if($(this).is(':nth-child(3)')) {
-            $('.detecting-square:nth-child(3)').addClass('is-selected');
+            objectBoxSelected(3)
+            // $('.detecting-square:nth-child(3)').addClass('is-selected');
         } else if($(this).is(':nth-child(4)')) {
-            $('.detecting-square:nth-child(4)').addClass('is-selected');
+            objectBoxSelected(4)
+            // $('.detecting-square:nth-child(4)').addClass('is-selected');
         } else if($(this).is(':nth-child(5)')) {
-            $('.detecting-square:nth-child(5)').addClass('is-selected');
+            objectBoxSelected(5)
+            // $('.detecting-square:nth-child(5)').addClass('is-selected');
         };
     });
 }
+
+function objectBoxSelected (index) {
+    $('.page-item:nth-child(' + index + ')').addClass('active');
+    $('.detecting-square:nth-child(' + index + ')').addClass('is-selected');
+    drawAttributeColor(index - 1)
+}
+
+function resetAttributes () {
+    attributes.color.splice(0, attributes.color.length)
+    // $( 'div.attribute-color' ).css('visibility', 'hidden')
+}
+
+function drawAttributes (boxes) {
+    boxes.forEach((value, index) => {
+        var aColor = {}
+        aColor.name = value.color_code
+        aColor.score = value.color_score
+        if (value.color_code !== 'mint') {
+            aColor.style = value.color_code
+        } else {
+            aColor.style = 'aquamarine'
+        }
+        attributes.color.push(aColor)
+    });
+
+    drawAttributeColor(0)
+}
+
+function drawAttributeColor (index) {
+    var color = capitalize(attributes.color[index].name)
+    var score = attributes.color[index].score.toFixed(4) * 100
+
+    $( 'div.attribute-color span').text(color)
+    // $( 'div.attribute-color figure').attr('data-initial', color.charAt(0))
+    $( 'div.attribute-color figure').css('background-color', attributes.color[index].style)
+
+    $( 'div.attribute-color div.bar').attr('data-similar-value', score + '%')
+    $( 'div.attribute-color div.bar div.bar-item').attr('aria-valuenow', score + '')
+    $( 'div.attribute-color div.bar div.bar-item').css('width', score + '%')
+}
+
+function showLoader (show) {
+    if (show) {
+        $('.loader-area').css('visibility', 'visible')
+    } else {
+        $('.loader-area').css('visibility', 'hidden')
+    }
+}
+
 /******
  * ends of Views
  * *****/
@@ -227,6 +312,10 @@ function downloadToLocalWithURI(uri, name) {
     document.body.removeChild(link);
     delete link;
 }
+
+function capitalize(s) {
+    return s && s[0].toUpperCase() + s.slice(1);
+}
 /******
  * ends of Utils
  * *****/
@@ -240,32 +329,43 @@ window.readInputFile = function (input) {
 
         var reader = new FileReader();
         reader.onload = function (e) {
+            $('.recent-item').removeClass('is-selected');
+
             let src = e.target.result;
-
-            let anImage = new Image()
-            anImage.onload = function () {
-                anImage.name = anImageFile.name
-                anImage.type = anImageFile.type
-
-                let resizedImage = resizeWithRatio(anImage)
-
-                var canvas = document.createElement('canvas');
-                var context = canvas.getContext("2d");
-                canvas.width = resizedImage.width;
-                canvas.height = resizedImage.height;
-                context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
-
-                console.log('original: \n' + resizedImage.width + ' x ' + resizedImage.height)
-
-                let fileURL = canvas.toDataURL()
-                loadPreviewImage(fileURL, resizedImage)
-
-                // downloadToLocalWithURI(fileURL, resizedImage.name)
-            }
-            anImage.src = src
+            loadImage(src, anImageFile.name, anImageFile.type)
         }
         reader.readAsDataURL(anImageFile);
     }
+}
+
+window.loadImage = function (src, fileName, fileType) {
+    if (!fileName) {
+        fileName = 'temp.jpeg'
+    }
+    if (!fileType) {
+        fileType = 'image/jpeg'
+    }
+    let anImage = new Image()
+    anImage.onload = function () {
+        anImage.name = fileName
+        anImage.type = fileType
+
+        let resizedImage = resizeWithRatio(anImage)
+
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext("2d");
+        canvas.width = resizedImage.width;
+        canvas.height = resizedImage.height;
+        context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
+
+        console.log('origin: \n' + resizedImage.width + ' x ' + resizedImage.height)
+
+        let fileURL = canvas.toDataURL()
+        loadPreviewImage(fileURL, resizedImage)
+
+        // downloadToLocalWithURI(fileURL, resizedImage.name)
+    }
+    anImage.src = src
 }
 
 },{"stylelens-sdk-js":8}],2:[function(require,module,exports){
@@ -445,7 +545,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -505,7 +605,7 @@ Emitter.prototype.hasListeners = function(event){
     /**
      * The default HTTP timeout for all API calls.
      * @type {Number}
-     * @default 60000
+     * @default 5000
      */
     this.timeout = 5000;
 
@@ -532,6 +632,10 @@ Emitter.prototype.hasListeners = function(event){
       this.agent = new superagent.agent();
     }
 
+    /*
+     * Allow user to override superagent agent
+     */
+    this.requestAgent = null;
   };
 
   /**
@@ -798,6 +902,7 @@ Emitter.prototype.hasListeners = function(event){
    * @param {String} httpMethod The HTTP method to use.
    * @param {Object.<String, String>} pathParams A map of path parameters and their values.
    * @param {Object.<String, Object>} queryParams A map of query parameters and their values.
+   * @param {Object.<String, Object>} collectionQueryParams A map of collection query parameters and their values.
    * @param {Object.<String, Object>} headerParams A map of header parameters and their values.
    * @param {Object.<String, Object>} formParams A map of form parameters and their values.
    * @param {Object} bodyParam The value to pass as the request body.
@@ -810,7 +915,7 @@ Emitter.prototype.hasListeners = function(event){
    * @returns {Object} The SuperAgent request object.
    */
   exports.prototype.callApi = function callApi(path, httpMethod, pathParams,
-      queryParams, headerParams, formParams, bodyParam, authNames, contentTypes, accepts,
+      queryParams, collectionQueryParams, headerParams, formParams, bodyParam, authNames, contentTypes, accepts,
       returnType, callback) {
 
     var _this = this;
@@ -820,6 +925,25 @@ Emitter.prototype.hasListeners = function(event){
     // apply authentications
     this.applyAuthToRequest(request, authNames);
 
+    // set collection query parameters
+    for (var key in collectionQueryParams) {
+      if (collectionQueryParams.hasOwnProperty(key)) {
+        var param = collectionQueryParams[key];
+        if (param.collectionFormat === 'csv') {
+          // SuperAgent normally percent-encodes all reserved characters in a query parameter. However,
+          // commas are used as delimiters for the 'csv' collectionFormat so they must not be encoded. We
+          // must therefore construct and encode 'csv' collection query parameters manually.
+          if (param.value != null) {
+            var value = param.value.map(this.paramToString).map(encodeURIComponent).join(',');
+            request.query(encodeURIComponent(key) + "=" + value);
+          }
+        } else {
+          // All other collection query parameters should be treated as ordinary query parameters.
+          queryParams[key] = this.buildCollectionParam(param.value, param.collectionFormat);
+        }
+      }
+    }
+
     // set query parameters
     if (httpMethod.toUpperCase() === 'GET' && this.cache === false) {
         queryParams['_'] = new Date().getTime();
@@ -828,6 +952,12 @@ Emitter.prototype.hasListeners = function(event){
 
     // set header parameters
     request.set(this.defaultHeaders).set(this.normalizeParams(headerParams));
+
+
+    // set requestAgent if it is set by user
+    if (this.requestAgent) {
+      request.agent(this.requestAgent);
+    }
 
     // set request timeout
     request.timeout(this.timeout);
@@ -1016,7 +1146,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -1049,7 +1179,7 @@ Emitter.prototype.hasListeners = function(event){
    * Constructs a new FeedApi. 
    * @alias module:api/FeedApi
    * @class
-   * @param {module:ApiClient} apiClient Optional API client implementation to use,
+   * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
    * default to {@link module:ApiClient#instance} if unspecified.
    */
   var exports = function(apiClient) {
@@ -1082,7 +1212,9 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
         'offset': opts['offset'],
-        'limit': opts['limit']
+        'limit': opts['limit'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1096,7 +1228,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/feeds', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1116,7 +1248,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -1149,7 +1281,7 @@ Emitter.prototype.hasListeners = function(event){
    * Constructs a new ImageApi. 
    * @alias module:api/ImageApi
    * @class
-   * @param {module:ApiClient} apiClient Optional API client implementation to use,
+   * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
    * default to {@link module:ApiClient#instance} if unspecified.
    */
   var exports = function(apiClient) {
@@ -1192,6 +1324,8 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
       };
+      var collectionQueryParams = {
+      };
       var headerParams = {
       };
       var formParams = {
@@ -1204,7 +1338,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/images/hosts/{hostCode}/images/{productNo}', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1238,6 +1372,8 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
       };
+      var collectionQueryParams = {
+      };
       var headerParams = {
       };
       var formParams = {
@@ -1250,7 +1386,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/images/{imageId}', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1288,7 +1424,9 @@ Emitter.prototype.hasListeners = function(event){
       var queryParams = {
         'imageId': imageId,
         'offset': opts['offset'],
-        'limit': opts['limit']
+        'limit': opts['limit'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1302,7 +1440,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/images', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1340,7 +1478,9 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
         'offset': opts['offset'],
-        'limit': opts['limit']
+        'limit': opts['limit'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1354,7 +1494,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/images/objects/{objectId}', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1386,7 +1526,9 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
         'offset': opts['offset'],
-        'limit': opts['limit']
+        'limit': opts['limit'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1401,7 +1543,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/images/userImages', 'POST',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1442,6 +1584,8 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
       };
+      var collectionQueryParams = {
+      };
       var headerParams = {
       };
       var formParams = {
@@ -1454,7 +1598,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/images/userImages/{userImageId}/objects/{objectIndex}', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1474,7 +1618,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -1507,7 +1651,7 @@ Emitter.prototype.hasListeners = function(event){
    * Constructs a new ObjectApi. 
    * @alias module:api/ObjectApi
    * @class
-   * @param {module:ApiClient} apiClient Optional API client implementation to use,
+   * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
    * default to {@link module:ApiClient#instance} if unspecified.
    */
   var exports = function(apiClient) {
@@ -1543,6 +1687,8 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
       };
+      var collectionQueryParams = {
+      };
       var headerParams = {
       };
       var formParams = {
@@ -1555,7 +1701,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/objects/images/{imageId}', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1588,6 +1734,8 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
       };
+      var collectionQueryParams = {
+      };
       var headerParams = {
       };
       var formParams = {
@@ -1601,7 +1749,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/objects', 'POST',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1621,7 +1769,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -1654,7 +1802,7 @@ Emitter.prototype.hasListeners = function(event){
    * Constructs a new PlaygroundApi. 
    * @alias module:api/PlaygroundApi
    * @class
-   * @param {module:ApiClient} apiClient Optional API client implementation to use,
+   * @param {module:ApiClient} [apiClient] Optional API client implementation to use,
    * default to {@link module:ApiClient#instance} if unspecified.
    */
   var exports = function(apiClient) {
@@ -1691,7 +1839,9 @@ Emitter.prototype.hasListeners = function(event){
         'keyword': opts['keyword'],
         'categoryName': opts['categoryName'],
         'offset': opts['offset'],
-        'limit': opts['limit']
+        'limit': opts['limit'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1705,7 +1855,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/playgrounds/images', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1745,7 +1895,9 @@ Emitter.prototype.hasListeners = function(event){
       var queryParams = {
         'category': opts['category'],
         'offset': opts['offset'],
-        'limit': opts['limit']
+        'limit': opts['limit'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1759,7 +1911,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/playgrounds/images/datasets/{source}/categories', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1795,7 +1947,9 @@ Emitter.prototype.hasListeners = function(event){
         'source': source
       };
       var queryParams = {
-        'category': opts['category']
+        'category': opts['category'],
+      };
+      var collectionQueryParams = {
       };
       var headerParams = {
       };
@@ -1809,7 +1963,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/playgrounds/images/datasets/{source}/categories/counts', 'GET',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1842,6 +1996,8 @@ Emitter.prototype.hasListeners = function(event){
       };
       var queryParams = {
       };
+      var collectionQueryParams = {
+      };
       var headerParams = {
       };
       var formParams = {
@@ -1855,7 +2011,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/playgrounds/objects', 'POST',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1900,8 +2056,13 @@ Emitter.prototype.hasListeners = function(event){
         'source': source
       };
       var queryParams = {
-        'ids': this.apiClient.buildCollectionParam(ids, 'multi'),
-        'valid': valid
+        'valid': valid,
+      };
+      var collectionQueryParams = {
+        'ids': {
+          value: ids,
+          collectionFormat: 'multi'
+        },
       };
       var headerParams = {
       };
@@ -1915,7 +2076,7 @@ Emitter.prototype.hasListeners = function(event){
 
       return this.apiClient.callApi(
         '/playgrounds/images/datasets/{source}', 'POST',
-        pathParams, queryParams, headerParams, formParams, postBody,
+        pathParams, queryParams, collectionQueryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
@@ -1935,7 +2096,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2140,7 +2301,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2248,7 +2409,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2356,7 +2517,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2402,6 +2563,8 @@ Emitter.prototype.hasListeners = function(event){
 
 
 
+
+
   };
 
   /**
@@ -2429,6 +2592,12 @@ Emitter.prototype.hasListeners = function(event){
       }
       if (data.hasOwnProperty('class_code')) {
         obj['class_code'] = ApiClient.convertToType(data['class_code'], 'String');
+      }
+      if (data.hasOwnProperty('color_code')) {
+        obj['color_code'] = ApiClient.convertToType(data['color_code'], 'String');
+      }
+      if (data.hasOwnProperty('color_score')) {
+        obj['color_score'] = ApiClient.convertToType(data['color_score'], 'Number');
       }
       if (data.hasOwnProperty('score')) {
         obj['score'] = ApiClient.convertToType(data['score'], 'Number');
@@ -2458,6 +2627,14 @@ Emitter.prototype.hasListeners = function(event){
    */
   exports.prototype['class_code'] = undefined;
   /**
+   * @member {String} color_code
+   */
+  exports.prototype['color_code'] = undefined;
+  /**
+   * @member {Number} color_score
+   */
+  exports.prototype['color_score'] = undefined;
+  /**
    * @member {Number} score
    */
   exports.prototype['score'] = undefined;
@@ -2480,7 +2657,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2561,7 +2738,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2653,7 +2830,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2745,7 +2922,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2837,7 +3014,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -2929,7 +3106,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3021,7 +3198,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3113,7 +3290,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3205,7 +3382,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3305,7 +3482,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3397,7 +3574,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3489,7 +3666,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3581,7 +3758,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3681,7 +3858,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -3887,7 +4064,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -4035,7 +4212,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -4116,7 +4293,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -4208,7 +4385,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -4406,7 +4583,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
@@ -4620,7 +4797,7 @@ Emitter.prototype.hasListeners = function(event){
  * NOTE: This class is auto generated by the swagger code generator program.
  * https://github.com/swagger-api/swagger-codegen.git
  *
- * Swagger Codegen version: 2.2.3
+ * Swagger Codegen version: 2.3.1
  *
  * Do not edit the class manually.
  *
