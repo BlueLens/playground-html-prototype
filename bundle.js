@@ -329,7 +329,7 @@ window.readInputFile = function (input) {
 
         var reader = new FileReader();
         reader.onload = function (e) {
-            $('.recent-item').removeClass('is-selected');
+            $('.recent-item').removeClass('is-clicked');
 
             let src = e.target.result;
             loadImage(src, anImageFile.name, anImageFile.type)

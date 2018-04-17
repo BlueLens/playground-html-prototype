@@ -68,8 +68,8 @@ $(document).ready(function() {
     })
 
     $('.recent-item').click(function() {
-        $('.recent-item').removeClass('is-selected');
-        $(this).addClass('is-selected');
+        $('.recent-item').removeClass('is-clicked');
+        $(this).addClass('is-clicked');
         var path = $(this).find('img').attr('src');
         $('.detecting-preview-img').attr('src', path);
         loadImage(path)
