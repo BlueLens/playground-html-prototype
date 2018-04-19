@@ -249,7 +249,7 @@ function drawAttributes (boxes) {
 
 function drawAttributeColor (index) {
     var color = capitalize(attributes.color[index].name)
-    var score = attributes.color[index].score.toFixed(4) * 100
+    var score = (attributes.color[index].score * 100).toFixed(2)
 
     $( 'div.attribute-color span').text(color)
     // $( 'div.attribute-color figure').attr('data-initial', color.charAt(0))
