@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/BluehackRano/playground-html-prototype#readme",
   "dependencies": {
-    "stylelens-sdk-js": "0.0.7"
+    "stylelens-sdk-js": "0.0.11"
   }
 }

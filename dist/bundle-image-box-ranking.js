@@ -1,149 +1,187 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 let StyleApi = require('stylelens-sdk-js');
 
-let playground_api = new StyleApi.PlaygroundApi()
+const TODO = 'todo'
+const IN_PROGRESS = 'in_progress'
+const DONE = 'done'
 
+var member
+var cates
+
+let playground_api = new StyleApi.PlaygroundApi()
+var API_QUEUE_STATUS = TODO
 /******
  * APIs
  * *****/
-keyword = ''
-offset = 0
-limit = 100
-
-function getImagesByKeyword (keyword) {
-    $( '#search-prev-button' ).prop("disabled", true)
-    $( '#search-next-button' ).prop("disabled", true)
-    $('.result-list').empty()
-
+function getImagesDatasetCategoryCountByCategory (category) {
+    let source = 'deepfashion'
     var opts = {
-        'keyword': keyword,
-        'offset': offset,
-        'limit': limit
-    };
-    playground_api.getImagesByKeyword(opts, function (error, data, response) {
+        'category': category
+    }
+    playground_api.getImagesDatasetCategoriesCountsByCategory(source, opts, function (error, data, response) {
+        if (API_QUEUE_STATUS != IN_PROGRESS) {
+            return
+        }
+
         if (error) {
-            console.error(error);
+            // console.error(error);
+
+            setCategories(category, null, error)
         } else {
-            console.log('getImagesByKeywords API called successfully.\n Returned data: ')
-            console.log(data)
-            drawResults(keyword, data.data)
+            // console.log('getImagesDatasetCategoriesCountsByCategory API called successfully.\n Returned data: ')
+            // console.log(data)
+
+            setCategories(category, data.data, null)
         }
     })
 }
 
-function generateResultImage (image) {
-    let product_name = image.name ? image.name : '""'
-    let cate = image.cate ? image.cate : '""'
-    let tags = image.tags ? image.tags : '""'
-    let image_src = image.main_image_mobile_full ? image.main_image_mobile_full : '""'
-
-    return '<figure class="figure search-result-image"' +
-        'product_name="' + product_name +
-        '" cate="' + cate +
-        '" tags="' + tags +
-        '"> <img src="' + image_src + '" alt="" />' +
-        '<figcaption>' + keyword + '</figcaption> </figure>'
+function retrieveCategoryCounts () {
+    API_QUEUE_STATUS = IN_PROGRESS
+    for (var [key, value] of cates) {
+        value.status = IN_PROGRESS
+        getImagesDatasetCategoryCountByCategory(key)
+    }
 }
 
-function drawResults (keyword, data) {
-    $( '#search-keywords-result-count' ).text('(' + keyword + ' : ' + data.total_count + '개)')
-
-    if (offset > 0) {
-        $( '#search-prev-button' ).prop("disabled", false)
-    }
-    if (data.images.length == limit) {
-        $( '#search-next-button' ).prop("disabled", false)
-    }
-
-    $( '#search-results-current' ).text(' ( ' + (offset+1) + ' ~ )')
-    if (data.images.length == 0) {
-        $( '#search-results-current' ).text('( )')
-    }
-
-    for(let i=0; i<data.images.length; i++) {
-        $('.result-list').append(generateResultImage(data.images[i]))
-    }
-
-    $( '.search-result-image' ).click(function () {
-        console.log('product_name : ' + $(this).attr('product_name')
-            + '\ncate : ' + $(this).attr('cate')
-            + '\ntags : ' + $(this).attr('tags'))
-    })
-}
-
-function getBaseUrl () {
-    var re = new RegExp(/^.*\//);
-    return re.exec(window.location.href);
-}
-
-function searchButtonClicked () {
-    if ($( '#search-keywords-input' ).val().trim() == '') {
-        alert('Please enter the Search Keyword.')
+function setCategories (category, data, error) {
+    if (!error) {
+        cates.set(category,
+            {status:DONE, total_count: parseFloat(data.total_count), done_count: parseFloat(data.valid_count) + parseFloat(data.invalid_count)})
+        checkStatus()
+    } else {
+        if (API_QUEUE_STATUS == IN_PROGRESS) {
+            getImagesDatasetCategoryCountByCategory(category)
+        }
         return
     }
-    $( '#search-keywords-result-count' ).text('')
-    keyword = $( '#search-keywords-input' ).val()
-    offset = 0
-    limit = 100
-    $( '#search-results-current' ).text('')
-
-    getImagesByKeyword(keyword)
-
-    $( '#search-keywords-input' ).val('')
 }
 
-function prevButtonClicked () {
-    offset -= limit
-    getImagesByKeyword(keyword)
+function checkStatus () {
+    console.log('Ranking: In progress...')
+    for (var [key, value] of cates) {
+        if (value.status != DONE) {
+            return
+        }
+    }
+    API_QUEUE_STATUS = DONE
+    $('.ranking-loading').hide()
+    calcRanking()
+    console.log('Ranking: Done.')
 }
 
-function nextButtonClicked () {
-    offset += limit
-    getImagesByKeyword(keyword)
+function initData () {
+    cates = new Map();
+
+    cates.set('Dress', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Anorak', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Bomber', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Jacket', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Parka', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Blazer', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Peacoat', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Coat', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Robe', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Romper', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Tank', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Henley', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Jersey', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Top', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Tee', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Cardigan', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Turtleneck', {status:TODO, total_count: 0, done_count: 0})
+    cates.set('Sweater', {status:TODO, total_count: 0, done_count: 0})
+
+    cates.set('Blouse', {status:TODO, total_count: 0, done_count: 0})
+
+
+    member = [
+        { name: 'player', categories: ['Dress'], score: 0 },
+        { name: 'cj', categories: ['Anorak', 'Bomber', 'Jacket', 'Parka', 'Blazer', 'Peacoat', 'Coat', 'Robe', 'Romper'], score: 0 },
+        { name: 'rano', categories: ['Tank', 'Henley', 'Jersey', 'Top'], score: 0 },
+        { name: 'k', categories: ['Tee'], score: 0 },
+        { name: 'lim', categories: ['Cardigan', 'Turtleneck', 'Sweater'], score: 0 },
+        { name: 'lion', categories: ['Blouse'], score: 0 }
+    ]
+
+}
+
+function resetData () {
+    $('.ranking-loading').show()
+
+    for (let i=0; i<member.length; i++) {
+        member[i].score = 0
+    }
+
+    for (var [key, value] of cates) {
+        value.status = TODO
+        value.total_count = 0
+        value.done_count = 0
+    }
+
+    $('.ranking-area').empty()
+
+    API_QUEUE_STATUS = TODO
+}
+
+function calcScore (done, tot) {
+    var score = done / tot * 100
+    return score
+    // return score.toFixed(2)
+}
+
+function calcRanking () {
+    for (let i=0; i<member.length; i++) {
+        var tot_cnt = 0
+        var done_cnt = 0
+        for (let j=0; j<member[i].categories.length; j++) {
+            done_cnt += cates.get(member[i].categories[j]).done_count
+            tot_cnt += cates.get(member[i].categories[j]).total_count
+        }
+        member[i].score = calcScore(done_cnt, tot_cnt)
+    }
+    member.sort(function (a, b) {
+        if (a.score > b.score) {
+            return -1;
+        }
+        if (a.score < b.score) {
+            return 1;
+        }
+        return 0;
+    })
+    drawRanking()
+}
+
+function drawRanking () {
+    for (let i=0; i<member.length; i++) {
+        if (i!=0) {
+            $('.ranking-area').append('<li>' + member[i].name + ' : ' + member[i].score.toFixed(2) + '%</li>')
+            continue
+        }
+        if (member[i].name == 'player') {
+            $('.ranking-area').append('<li style="font-weight: bold; color: black;">🔥' + member[i].name + '🔥 : ' + member[i].score.toFixed(2) + '% ㅎㄷㄷ;; </li>')
+        } else {
+            $('.ranking-area').append('<li style="font-weight: bold; color: black;">🔥' + member[i].name + '🔥 : ' + member[i].score.toFixed(2) + '%</li>')
+        }
+
+    }
+}
+
+function refreshButtonClicked () {
+    resetData()
+    retrieveCategoryCounts()
 }
 
 $(document).ready(function() {
+    initData()
+    resetData()
+    retrieveCategoryCounts()
 
-    $('.navigate-to-playground').click(function () {
-        $(location).attr('href', getBaseUrl());
-    });
-
-    $('.navigate-to-search').click(function () {
-        $(location).attr('href', getBaseUrl() + 'search.html');
-    });
-
-    $('.navigate-to-image-box').click(function () {
-        $(location).attr('href', getBaseUrl() + 'image_box.html');
-    });
-
-    $( '#search-button' ).click(searchButtonClicked)
-    $( '#search-prev-button' ).click(prevButtonClicked)
-    $( '#search-next-button' ).click(nextButtonClicked)
-
-    // $( '.search-result-image' ).click(function () {
-    //     console.log('product_name : ' + $(this).attr('product_name')
-    //                 + '\ncate : ' + $(this).attr('cate')
-    //                 + '\ntags : ' + $(this).attr('tags'))
-    // })
-
-    let keywords = ['티셔츠','t_shirt','티셔츠','t-shirts','tshirts','tee','반팔티','반팔','긴팔','sleeveless','나시티','민소매티','슬리브리스티','Tank','Tee','Henley','Jersey',
-        '크롭탑','crop_top','크롭탑','crop_top','croptop','크롭티','crop','배꼽티','브라','브래지어','bra','brassiere','bralette','브라렛','앞후크','노와이어브라',
-        '블라우스','blouse','블라우스','blouse','bl','Blouse',
-        '셔츠','shirt','셔츠','남방','shirts','nb','Button-Down','Flannel',
-        '스웨터','sweater','니트','스웨터','knit','nt','Turtleneck','Sweater',
-        '스웨트셔츠','sweatshirt','맨투맨','mantoman','mtm','sweatshirt','후드티','hood','후드T','Hoodie','Poncho',
-        '자켓','jaket','자켓','jaket','jk','점퍼','jumper','jp','가디건','cardigan','cd','조끼','베스트','vest','후드집업','Anorak','Bomber','Jacket','Jersey','blazer','Cardigan',
-        '코트','coat','코트','coat', 'ct', '롱패딩', 'long패딩','Parka','Peacoat','Coat',
-        '팬츠','pants','pants','팬츠','바지','슬랙스','slacks','레깅스','leggings','pt','Chinos','Capris','chinos','culottes','Gauchos','Jodhpurs','joggers','leggins','sweatpants',
-        '청바지','jeans','jean','청바지','워싱진','데님진','스키니진','블랙진','화이트진','데님팬츠','데님바지','제깅스','jeggings','jeans',
-        '반바지','shorts','반바지','쇼츠','shorts','숏팬츠','핫팬츠','팬티','panty','panties','속바지','이너팬츠','트렁크','하프팬츠','쇼트팬츠','cutoffs','shorts','sweatshorts','trunks',
-        '치마','skirt','치마','skirt','스커트','sk','치마바지','스커트팬츠','skirtpants','skirt',
-        '드레스','dress','dress','드레스','슬립','가운','slip','gown','원피스','ops','onepiece','기모노','sarong','Caftan','Cape','Dress','Kaftan','Nightdress','Robe','Romper','Shirtdress','Sundress','kimono',
-        '점프슈트','jumpsuit','점프수트','점프슈트','바디수트','바디슈트','bodysuit','jumpsuit','멜빵바지','멜빵팬츠','Jumpsuit']
-    for (let i=0; i<keywords.length; i++) {
-        $('#search_keywords').append('<option value="' + keywords[i] + '">')
-    }
-
+    $( '.button-refresh' ).click(refreshButtonClicked)
 })
 },{"stylelens-sdk-js":8}],2:[function(require,module,exports){
 

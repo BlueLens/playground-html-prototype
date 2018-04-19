@@ -27,11 +27,14 @@ function getPlaygroundObjectsByUserImageFile (file) {
     playground_api.getPlaygroundObjectsByUserImageFile(file, function(error, data, response) {
         if (error) {
             console.error(error);
+            showLoader(false)
         } else {
             console.log('getPlaygroundObjectsByUserImageFile API called successfully.\n Returned data: ')
             console.log(data.data.boxes)
+            showLoader(false)
             drawObjectBoxes(data.data.boxes)
             drawDataSelect(data.data.boxes.length)
+            drawAttributes(data.data.boxes)
         }
     })
 }
@@ -44,6 +47,25 @@ function getPlaygroundObjectsByUserImageFile (file) {
  * *****/
 const USER_IMAGE_MAX_SIZE = 380
 let RATIO
+var attributes = {
+    color: [
+        {
+            name: 'black',
+            score: 0.77,
+            style: 'black'
+        },
+        {
+            name: 'black',
+            score: 0.77,
+            style: 'black'
+        },
+        {
+            name: 'black',
+            score: 0.77,
+            style: 'black'
+        }
+    ]
+}
 
 function loadPreviewImage(url, anImage) {
     let preview_img = $('.detecting-preview-img');
@@ -74,7 +96,7 @@ function loadPreviewImage(url, anImage) {
             'height': detectingWrapH
         });
 
-        console.log('ratio before : ' + RATIO)
+        // console.log('ratio before : ' + RATIO)
 
         if (anImage.width >= anImage.height) {
             RATIO = detectingWrapW / USER_IMAGE_MAX_SIZE
@@ -83,7 +105,7 @@ function loadPreviewImage(url, anImage) {
         }
     }).each(function() {
         if(this.complete) {
-            preview_img.load();
+            // preview_img.load();
         }
 
         let aFile = dataURLtoFile(url, anImage.name)
@@ -92,8 +114,10 @@ function loadPreviewImage(url, anImage) {
 }
 
 function resetViews() {
+    showLoader(true)
     resetObjectBoxes()
     resetDataSelect()
+    resetAttributes()
 }
 
 function resetObjectBoxes() {
@@ -124,17 +148,23 @@ function drawBox(box, index) {
     $('.detecting-square').mousedown(function() {
         $('.detecting-square').removeClass('is-selected');
         $('.page-item').removeClass('active');
-        $(this).addClass('is-selected');
+
+        // $(this).addClass('is-selected');
         if($(this).is(':first-child')) {
-            $('.page-item:first-child').addClass('active');
+            objectBoxSelected(1)
+            // $('.page-item:first-child').addClass('active');
         } else if($(this).is(':nth-child(2)')) {
-            $('.page-item:nth-child(2)').addClass('active');
+            objectBoxSelected(2)
+            // $('.page-item:nth-child(2)').addClass('active');
         } else if($(this).is(':nth-child(3)')) {
-            $('.page-item:nth-child(3)').addClass('active');
+            objectBoxSelected(3)
+            // $('.page-item:nth-child(3)').addClass('active');
         } else if($(this).is(':nth-child(4)')) {
-            $('.page-item:nth-child(4)').addClass('active');
+            objectBoxSelected(4)
+            // $('.page-item:nth-child(4)').addClass('active');
         } else if($(this).is(':nth-child(5)')) {
-            $('.page-item:nth-child(5)').addClass('active');
+            objectBoxSelected(5)
+            // $('.page-item:nth-child(5)').addClass('active');
         };
     });
 }
@@ -168,20 +198,75 @@ function drawDataSelect(count) {
     $('.page-item').mousedown(function() {
         $('.detecting-square').removeClass('is-selected');
         $('.page-item').removeClass('active');
-        $(this).addClass('active');
+
+        // $(this).addClass('active');
         if($(this).is(':first-child')) {
-            $('.detecting-square:first-child').addClass('is-selected');
+            objectBoxSelected(1)
+            // $('.detecting-square:first-child').addClass('is-selected');
         } else if($(this).is(':nth-child(2)')) {
-            $('.detecting-square:nth-child(2)').addClass('is-selected');
+            objectBoxSelected(2)
+            // $('.detecting-square:nth-child(2)').addClass('is-selected');
         } else if($(this).is(':nth-child(3)')) {
-            $('.detecting-square:nth-child(3)').addClass('is-selected');
+            objectBoxSelected(3)
+            // $('.detecting-square:nth-child(3)').addClass('is-selected');
         } else if($(this).is(':nth-child(4)')) {
-            $('.detecting-square:nth-child(4)').addClass('is-selected');
+            objectBoxSelected(4)
+            // $('.detecting-square:nth-child(4)').addClass('is-selected');
         } else if($(this).is(':nth-child(5)')) {
-            $('.detecting-square:nth-child(5)').addClass('is-selected');
+            objectBoxSelected(5)
+            // $('.detecting-square:nth-child(5)').addClass('is-selected');
         };
     });
 }
+
+function objectBoxSelected (index) {
+    $('.page-item:nth-child(' + index + ')').addClass('active');
+    $('.detecting-square:nth-child(' + index + ')').addClass('is-selected');
+    drawAttributeColor(index - 1)
+}
+
+function resetAttributes () {
+    attributes.color.splice(0, attributes.color.length)
+    // $( 'div.attribute-color' ).css('visibility', 'hidden')
+}
+
+function drawAttributes (boxes) {
+    boxes.forEach((value, index) => {
+        var aColor = {}
+        aColor.name = value.color_code
+        aColor.score = value.color_score
+        if (value.color_code !== 'mint') {
+            aColor.style = value.color_code
+        } else {
+            aColor.style = 'aquamarine'
+        }
+        attributes.color.push(aColor)
+    });
+
+    drawAttributeColor(0)
+}
+
+function drawAttributeColor (index) {
+    var color = capitalize(attributes.color[index].name)
+    var score = (attributes.color[index].score * 100).toFixed(2)
+
+    $( 'div.attribute-color span').text(color)
+    // $( 'div.attribute-color figure').attr('data-initial', color.charAt(0))
+    $( 'div.attribute-color figure').css('background-color', attributes.color[index].style)
+
+    $( 'div.attribute-color div.bar').attr('data-similar-value', score + '%')
+    $( 'div.attribute-color div.bar div.bar-item').attr('aria-valuenow', score + '')
+    $( 'div.attribute-color div.bar div.bar-item').css('width', score + '%')
+}
+
+function showLoader (show) {
+    if (show) {
+        $('.loader-area').css('visibility', 'visible')
+    } else {
+        $('.loader-area').css('visibility', 'hidden')
+    }
+}
+
 /******
  * ends of Views
  * *****/
@@ -214,7 +299,37 @@ function dataURLtoFile (dataurl, filename) {
     while(n--){
         u8arr[n] = bstr.charCodeAt(n);
     }
+    // console.log('bbb')
+    // var blob = new Blob([u8arr], {type: mime})
+    // return new File([blob], filename)
     return new File([u8arr], filename, {type:mime});
+
+    // let blob
+    // try {
+    //     blob = new Blob([u8arr], {
+    //         type: mime
+    //     })
+    //     console.log(blob)
+    //
+    //
+    //     // var file =  new File([blob], filename)
+    //     // console.log(file)
+    //     return formData
+    // } catch (e) {
+    //     console.log(e)
+    //     if (e.name == "InvalidStateError") {
+    //         // InvalidStateError (tested on Win8 IE11)
+    //         var bb = new MSBlobBuilder();
+    //         bb.append(u8arr);
+    //         blob = bb.getBlob(mime)
+    //
+    //         console.log(blob)
+    //         return new File([blob], filename)
+    //     } else {
+    //         // We're screwed, blob constructor unsupported entirely
+    //     }
+    // }
+    // return new File([blob], filename)
 }
 
 function downloadToLocalWithURI(uri, name) {
@@ -225,6 +340,10 @@ function downloadToLocalWithURI(uri, name) {
     link.click();
     document.body.removeChild(link);
     delete link;
+}
+
+function capitalize(s) {
+    return s && s[0].toUpperCase() + s.slice(1);
 }
 /******
  * ends of Utils
@@ -239,30 +358,41 @@ window.readInputFile = function (input) {
 
         var reader = new FileReader();
         reader.onload = function (e) {
+            $('.recent-item').removeClass('is-clicked');
+
             let src = e.target.result;
-
-            let anImage = new Image()
-            anImage.onload = function () {
-                anImage.name = anImageFile.name
-                anImage.type = anImageFile.type
-
-                let resizedImage = resizeWithRatio(anImage)
-
-                var canvas = document.createElement('canvas');
-                var context = canvas.getContext("2d");
-                canvas.width = resizedImage.width;
-                canvas.height = resizedImage.height;
-                context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
-
-                console.log('original: \n' + resizedImage.width + ' x ' + resizedImage.height)
-
-                let fileURL = canvas.toDataURL()
-                loadPreviewImage(fileURL, resizedImage)
-
-                // downloadToLocalWithURI(fileURL, resizedImage.name)
-            }
-            anImage.src = src
+            loadImage(src, anImageFile.name, anImageFile.type)
         }
         reader.readAsDataURL(anImageFile);
     }
+}
+
+window.loadImage = function (src, fileName, fileType) {
+    if (!fileName) {
+        fileName = 'temp.jpeg'
+    }
+    if (!fileType) {
+        fileType = 'image/jpeg'
+    }
+    let anImage = new Image()
+    anImage.onload = function () {
+        anImage.name = fileName
+        anImage.type = fileType
+
+        let resizedImage = resizeWithRatio(anImage)
+
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext("2d");
+        canvas.width = resizedImage.width;
+        canvas.height = resizedImage.height;
+        context.drawImage(resizedImage, 0, 0, resizedImage.width, resizedImage.height);
+
+        console.log('origin: \n' + resizedImage.width + ' x ' + resizedImage.height)
+
+        let fileURL = canvas.toDataURL()
+        loadPreviewImage(fileURL, resizedImage)
+
+        // downloadToLocalWithURI(fileURL, resizedImage.name)
+    }
+    anImage.src = src
 }

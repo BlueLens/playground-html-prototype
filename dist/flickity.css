@@ -44,7 +44,26 @@ http://flickity.metafizzy.co
     height: 100px;
     overflow: hidden;
 }
-.recent-item:after {
+/*.recent-item:after {*/
+    /*content: "";*/
+    /*z-index: 1;*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*height: 100px;*/
+    /*background: #602CEB;*/
+    /*opacity: 0;*/
+/*}*/
+/*.recent-item:hover:after,*/
+/*.recent-item.is-selected:after {*/
+    /*opacity: .6;*/
+/*}*/
+.recent-item img {
+    height: 100px;
+}
+/* refactored by Rano */
+.recent-item:hover:after {
     content: "";
     z-index: 1;
     left: 0;
@@ -53,12 +72,16 @@ http://flickity.metafizzy.co
     width: 100%;
     height: 100px;
     background: #602CEB;
-    opacity: 0;
-}
-.recent-item:hover:after,
-.recent-item.is-selected:after {
     opacity: .6;
 }
-.recent-item img {
+.recent-item.is-clicked:after {
+    content: "";
+    z-index: 1;
+    left: 0;
+    top: 0;
+    position: absolute;
+    width: 100%;
     height: 100px;
+    background: #602CEB;
+    opacity: .6;
 }

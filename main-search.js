@@ -37,8 +37,8 @@ function generateResultImage (image) {
     let image_src = image.main_image_mobile_full ? image.main_image_mobile_full : '""'
 
     return '<figure class="figure search-result-image"' +
-        'product_name=' + product_name +
-        ' cate="' + cate +
+        'product_name="' + product_name +
+        '" cate="' + cate +
         '" tags="' + tags +
         '"> <img src="' + image_src + '" alt="" />' +
         '<figcaption>' + keyword + '</figcaption> </figure>'
@@ -111,6 +111,10 @@ $(document).ready(function() {
         $(location).attr('href', getBaseUrl() + 'search.html');
     });
 
+    $('.navigate-to-image-box').click(function () {
+        $(location).attr('href', getBaseUrl() + 'image_box.html');
+    });
+
     $( '#search-button' ).click(searchButtonClicked)
     $( '#search-prev-button' ).click(prevButtonClicked)
     $( '#search-next-button' ).click(nextButtonClicked)
@@ -138,4 +142,5 @@ $(document).ready(function() {
     for (let i=0; i<keywords.length; i++) {
         $('#search_keywords').append('<option value="' + keywords[i] + '">')
     }
+
 })
